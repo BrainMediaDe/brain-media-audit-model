@@ -6,20 +6,18 @@ Das Brain-Media Audit Model (BAM) ist ein maschinenlesbares Wissensmodell für I
 
 ---
 
-## Das Modell
+## Das erweiterte Modell (Gap-Analyse Ready)
+Jede Anforderung wird in operative Ebenen aufgebrochen, um nicht nur Wissen zu vermitteln, sondern Lücken aktiv zu schließen:
 
-Jede regulatorische Anforderung wird in vier operative Ebenen aufgebrochen:
+| Ebene | Funktion | Ihr Nutzen |
+|-------|----------|------------|
+| **Requirement** | Regulatorische Basis | Wissen was gilt – priorisiert und verständlich. |
+| **Gap-Check** 🆕 | **Diagnose-Tool** | Konkrete Prüffragen zur Identifikation interner Lücken. |
+| **Remediation** 🆕| **Behebung** | Schritt-für-Schritt-Anleitung zur Schließung der Lücke. |
+| **Risk** | Risikobewertung | Verstehen, was bei Nicht-Compliance auf dem Spiel steht. |
+| **Control** | Maßnahme | Wissen, was technisch/organisatorisch zu tun ist. |
+| **Evidence** | Audit-Nachweis | Auditoren überzeugen – mit validen Vorlagen. |
 
-```
-Requirement → Risk → Control → Evidence
-```
-
-| Ebene | Was es ist | Ihr Nutzen |
-|-------|-----------|------------|
-| **Requirement** | Regulatorische Anforderung (z. B. NIS-2 Art. 21) | Wissen was gilt – priorisiert und verständlich |
-| **Risk** | Risikobewertung mit Likelihood & Impact | Verstehen was auf dem Spiel steht |
-| **Control** | Konkrete Maßnahme mit Umsetzungshinweis | Wissen was zu tun ist – direkt umsetzbar |
-| **Evidence** | Nachweistyp mit editierbarem Template | Auditoren überzeugen – mit einem Klick |
 
 ---
 
