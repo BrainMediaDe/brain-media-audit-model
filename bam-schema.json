@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/brain-media/brain-media-audit-model/schema/bam-schema.json",
+  "title": "Brain-Media Audit Model (BAM) – Public Schema v1.0",
+  "description": "Maschinenlesbares Wissensmodell fuer IT-Compliance. Ueberführt regulatorische Anforderungen in operative, direkt umsetzbare Objekte nach dem Schema Requirement > Risk > Control > Evidence. Das vollstaendige Schema inkl. Gap-Check und Remediation ist Teil von KaaS Enterprise – brain-media.de/kaas.html",
+  "version": "1.0",
+  "type": "object",
+  "required": ["bam_version", "regulation", "article", "requirement", "risk", "control", "evidence"],
+  "properties": {
+    "bam_version": {
+      "type": "string",
+      "description": "Version des BAM-Schemas",
+      "example": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "description": "Eindeutige ID des BAM-Objekts",
+      "example": "NIS2-DE-021"
+    },
+    "regulation": {
+      "type": "string",
+      "description": "Regulierung auf die sich das Objekt bezieht",
+      "enum": ["NIS-2", "DORA", "CRA", "EU AI Act"],
+      "example": "NIS-2"
+    },
+    "article": {
+      "type": "string",
+      "description": "Artikel oder Paragraph der Regulierung",
+      "example": "Art. 21"
+    },
+    "requirement": {
+      "type": "string",
+      "description": "Formulierung der regulatorischen Anforderung",
+      "example": "Risikomanagement-Massnahmen fuer Netz- und Informationssysteme"
+    },
+    "priority": {
+      "type": "string",
+      "description": "Prioritaet der Anforderung",
+      "enum": ["kritisch", "hoch", "mittel", "niedrig"],
+      "example": "kritisch"
+    },
+    "risk": {
+      "type": "object",
+      "description": "Risikobewertung der Anforderung",
+      "required": ["likelihood", "impact", "score"],
+      "properties": {
+        "likelihood": {
+          "type": "string",
+          "enum": ["sehr hoch", "hoch", "mittel", "niedrig", "sehr niedrig"],
+          "example": "hoch"
+        },
+        "impact": {
+          "type": "string",
+          "enum": ["kritisch", "hoch", "mittel", "niedrig"],
+          "example": "kritisch"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9,
+          "example": 9
+        },
+        "description": {
+          "type": "string",
+          "example": "Fehlende MFA erhoeht das Risiko unbefugter Zugriffe erheblich"
+        }
+      }
+    },
+    "control": {
+      "type": "object",
+      "required": ["measure", "priority"],
+      "properties": {
+        "measure": { "type": "string", "example": "MFA fuer alle Admin-Konten einfuehren" },
+        "priority": {
+          "type": "string",
+          "enum": ["sofort", "kurzfristig", "mittelfristig", "langfristig"],
+          "example": "sofort"
+        },
+        "responsible": { "type": "string", "example": "IT-Sicherheitsbeauftragter" },
+        "effort": { "type": "string", "enum": ["gering", "mittel", "hoch"], "example": "mittel" },
+        "notes": { "type": "string", "example": "TOTP oder FIDO2 bevorzugen" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string", "example": "Konfigurationsnachweis" },
+        "template": { "type": "string", "example": "verfuegbar in KaaS – brain-media.de/kaas.html" },
+        "format": {
+          "type": "string",
+          "enum": ["Dokument", "Screenshot", "Log-Auszug", "Zertifikat", "Checkliste", "Policy"],
+          "example": "Dokument"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["offen", "in Umsetzung", "umgesetzt", "nicht anwendbar"],
+      "example": "offen"
+    },
+    "last_updated": { "type": "string", "format": "date", "example": "2026-04-23" },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "example": ["MFA", "Zugangskontrolle", "NIS-2"]
+    }
+  },
+  "_note": {
+    "version": "Public Schema v1.0 – Requirement > Risk > Control > Evidence",
+    "full_schema_v11": "BAM v1.1 ergaenzt Gap-Check und Remediation – verfuegbar in KaaS Enterprise",
+    "kaas_url": "https://www.brain-media.de/kaas.html",
+    "gap_check_hint": "Prüffragen zur aktiven Lückenerkennung – Teil von KaaS",
+    "remediation_hint": "Schritt-für-Schritt-Anleitungen zur Lückenschliessung – Teil von KaaS"
+  }
+}
