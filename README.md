@@ -35,7 +35,7 @@ Beispiel-Objekte für NIS-2 und DORA liegen unter `examples/`.
 
 BAM ist darauf ausgelegt, Compliance von einem manuellen Prozess in einen automatisierten Datenstrom zu transformieren. Die folgende Architektur zeigt die Integration in Ihre GRC-Landschaft:
 
-![BAM Referenzarchitektur](grafik.jpg)
+![BAM Referenzarchitektur](BAM_Referenzarchitektur.png)
 
 ### Integrationspfade:
 - **GRC-Systeme:** Automatisierter Import von Anforderungen und Controls.
