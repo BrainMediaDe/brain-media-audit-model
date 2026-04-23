@@ -75,12 +75,26 @@ BAM-Objekte sind valides JSON und können direkt:
 }
 ```
 
+## Schnellstart: BAM-Integration testen
+
+Um zu sehen, wie Executable Compliance in der Praxis funktioniert, nutzen Sie den mitgelieferten Integrator:
+
+  1. Voraussetzung: Installieren Sie Python (3.8+).
+
+  2. Ausführung: Starten Sie das Beispiel-Skript:
+    Bash
+
+    python bam_integrator.py
+
+  3. Ergebnis: Das Skript lädt das bam-example.json, validiert es gegen das Schema und erzeugt einen fertigen Markdown-Report für Ihre Dokumentation.
+
 ---
 
 ## Was dieses Repository enthält
 
 - `schema/bam-schema.json` – das vollständige BAM-JSON-Schema
 - `examples/` – Beispiel-Objekte für NIS-2 und DORA
+- `bam_integrator.py – Python-Referenzimplementierung für den Datenimport.
 - `LICENSE` – Creative Commons BY-NC 4.0
 
 ## Was nicht enthalten ist
