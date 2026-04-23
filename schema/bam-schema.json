@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/brain-media/brain-media-audit-model/schema/bam-schema.json",
+  "title": "Brain-Media Audit Model (BAM)",
+  "description": "Maschinenlesbares Wissensmodell fuer IT-Compliance. Ueberführt regulatorische Anforderungen in operative, direkt umsetzbare Objekte nach dem Schema Requirement > Risk > Control > Evidence.",
+  "version": "1.0",
+  "type": "object",
+  "required": ["bam_version", "regulation", "article", "requirement", "risk", "control", "evidence"],
+  "properties": {
+    "bam_version": {
+      "type": "string",
+      "description": "Version des BAM-Schemas",
+      "example": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "description": "Eindeutige ID des BAM-Objekts",
+      "example": "NIS2-DE-021"
+    },
+    "regulation": {
+      "type": "string",
+      "description": "Regulierung auf die sich das Objekt bezieht",
+      "enum": ["NIS-2", "DORA", "CRA", "EU AI Act"],
+      "example": "NIS-2"
+    },
+    "article": {
+      "type": "string",
+      "description": "Artikel oder Paragraph der Regulierung",
+      "example": "Art. 21"
+    },
+    "requirement": {
+      "type": "string",
+      "description": "Formulierung der regulatorischen Anforderung",
+      "example": "Risikomanagement-Massnahmen fuer Netz- und Informationssysteme"
+    },
+    "priority": {
+      "type": "string",
+      "description": "Prioritaet der Anforderung",
+      "enum": ["kritisch", "hoch", "mittel", "niedrig"],
+      "example": "kritisch"
+    },
+    "risk": {
+      "type": "object",
+      "description": "Risikobewertung der Anforderung",
+      "required": ["likelihood", "impact", "score"],
+      "properties": {
+        "likelihood": {
+          "type": "string",
+          "description": "Eintrittswahrscheinlichkeit",
+          "enum": ["sehr hoch", "hoch", "mittel", "niedrig", "sehr niedrig"],
+          "example": "hoch"
+        },
+        "impact": {
+          "type": "string",
+          "description": "Auswirkung bei Nichtumsetzung",
+          "enum": ["kritisch", "hoch", "mittel", "niedrig"],
+          "example": "kritisch"
+        },
+        "score": {
+          "type": "integer",
+          "description": "Risiko-Score (1-9)",
+          "minimum": 1,
+          "maximum": 9,
+          "example": 9
+        },
+        "description": {
+          "type": "string",
+          "description": "Freitext-Beschreibung des Risikos",
+          "example": "Fehlende MFA erhoecht das Risiko unbefugter Zugriffe auf kritische Systeme erheblich"
+        }
+      }
+    },
+    "control": {
+      "type": "object",
+      "description": "Konkrete Massnahme zur Umsetzung der Anforderung",
+      "required": ["measure", "priority"],
+      "properties": {
+        "measure": {
+          "type": "string",
+          "description": "Beschreibung der Massnahme",
+          "example": "MFA fuer alle Admin-Konten einfuehren"
+        },
+        "priority": {
+          "type": "string",
+          "description": "Umsetzungspriorit\u00e4t",
+          "enum": ["sofort", "kurzfristig", "mittelfristig", "langfristig"],
+          "example": "sofort"
+        },
+        "responsible": {
+          "type": "string",
+          "description": "Verantwortliche Rolle",
+          "example": "IT-Sicherheitsbeauftragter"
+        },
+        "effort": {
+          "type": "string",
+          "description": "Geschaetzter Aufwand",
+          "enum": ["gering", "mittel", "hoch"],
+          "example": "mittel"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Hinweise zur Umsetzung",
+          "example": "TOTP oder FIDO2 bevorzugen, SMS-basierte MFA vermeiden"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Nachweistyp und Template fuer den Audit",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Art des Nachweises",
+          "example": "Konfigurationsnachweis"
+        },
+        "template": {
+          "type": "string",
+          "description": "Verweis auf editierbares Template",
+          "example": "verfuegbar in KaaS"
+        },
+        "format": {
+          "type": "string",
+          "description": "Format des Nachweises",
+          "enum": ["Dokument", "Screenshot", "Log-Auszug", "Zertifikat", "Checkliste", "Policy"],
+          "example": "Dokument"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "description": "Umsetzungsstatus",
+      "enum": ["offen", "in Umsetzung", "umgesetzt", "nicht anwendbar"],
+      "example": "offen"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum der letzten Aktualisierung",
+      "example": "2026-04-22"
+    },
+    "tags": {
+      "type": "array",
+      "description": "Schlagwoerter zur Kategorisierung",
+      "items": { "type": "string" },
+      "example": ["MFA", "Zugangskontrolle", "Admin", "NIS-2"]
+    }
+  }
+}
