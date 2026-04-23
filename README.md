@@ -94,7 +94,7 @@ Um zu sehen, wie Executable Compliance in der Praxis funktioniert, nutzen Sie de
 
 - `schema/bam-schema.json` – das vollständige BAM-JSON-Schema
 - `examples/` – Beispiel-Objekte für NIS-2 und DORA
-- `bam_integrator.py – Python-Referenzimplementierung für den Datenimport.
+- `bam_integrator.py` – Python-Referenzimplementierung für den Datenimport.
 - `LICENSE` – Creative Commons BY-NC 4.0
 
 ## Was nicht enthalten ist
