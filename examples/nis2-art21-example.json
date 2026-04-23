@@ -1,0 +1,29 @@
+{
+  "bam_version": "1.0",
+  "id": "NIS2-DE-021",
+  "regulation": "NIS-2",
+  "article": "Art. 21",
+  "requirement": "Risikomanagement-Massnahmen fuer Netz- und Informationssysteme",
+  "priority": "kritisch",
+  "risk": {
+    "likelihood": "hoch",
+    "impact": "kritisch",
+    "score": 9,
+    "description": "Fehlende MFA erhoecht das Risiko unbefugter Zugriffe auf kritische Systeme erheblich. Bei einem erfolgreichen Angriff drohen Betriebsunterbrechungen, Datenverlust und Bussgelder bis 10 Mio. EUR."
+  },
+  "control": {
+    "measure": "MFA fuer alle Admin-Konten einfuehren",
+    "priority": "sofort",
+    "responsible": "IT-Sicherheitsbeauftragter",
+    "effort": "mittel",
+    "notes": "TOTP oder FIDO2 bevorzugen. SMS-basierte MFA vermeiden. Gilt fuer alle privilegierten Accounts inkl. Cloud-Zugaenge."
+  },
+  "evidence": {
+    "type": "Konfigurationsnachweis",
+    "template": "verfuegbar in KaaS – brain-media.de/kaas.html",
+    "format": "Screenshot"
+  },
+  "status": "offen",
+  "last_updated": "2026-04-22",
+  "tags": ["MFA", "Zugangskontrolle", "Admin", "NIS-2", "Art. 21"]
+}

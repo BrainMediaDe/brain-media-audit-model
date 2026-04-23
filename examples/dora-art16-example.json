@@ -1,0 +1,29 @@
+{
+  "bam_version": "1.0",
+  "id": "DORA-DE-014",
+  "regulation": "DORA",
+  "article": "Art. 16",
+  "requirement": "Vereinfachter IKT-Risikomanagementrahmen fuer kleine Finanzunternehmen",
+  "priority": "hoch",
+  "risk": {
+    "likelihood": "hoch",
+    "impact": "hoch",
+    "score": 8,
+    "description": "Ohne definierten IKT-Risikomanagementrahmen sind Finanzunternehmen bei Pruefungen durch die BaFin nicht ausreichend dokumentiert. Bussgelder und Reputationsschaeden drohen."
+  },
+  "control": {
+    "measure": "IKT-Risikomanagementrahmen dokumentieren und implementieren",
+    "priority": "kurzfristig",
+    "responsible": "CISO / IT-Leitung",
+    "effort": "hoch",
+    "notes": "Mindestanforderungen gemaess DORA Art. 16: Strategien, Richtlinien, Verfahren und Tools zur Steuerung von IKT-Risiken. Jaehrliche Ueberpruefung vorgesehen."
+  },
+  "evidence": {
+    "type": "Policy-Dokument",
+    "template": "verfuegbar in KaaS – brain-media.de/kaas.html",
+    "format": "Dokument"
+  },
+  "status": "offen",
+  "last_updated": "2026-04-22",
+  "tags": ["IKT-Risiko", "Rahmenwerk", "Policy", "DORA", "Art. 16", "BaFin"]
+}
