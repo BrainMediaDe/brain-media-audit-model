@@ -14,8 +14,8 @@ Minimale lokale REST-API fuer bam_dashboard.html (Single-User,
 ohne Multi-Tenant, ohne Authentifizierung). Liest bam_database.json
 und stellt die Inhalte unter /api/v2 bereit.
 
-Fuer Multi-Tenant-Betrieb, White-Label und produktiven Einsatz
-siehe BAM Enterprise (brain-media.de).
+Fuer produktiven Betrieb auf einem eigenen Server siehe
+docs/DEPLOYMENT.md.
 
 Starten:
     pip3 install flask flask-cors --break-system-packages

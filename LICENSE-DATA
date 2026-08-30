@@ -24,7 +24,4 @@ Diese Lizenz gilt für:
   - bam_database.json
   - alle daraus abgeleiteten oder erweiterten Datenmodelle
 
-Sie gilt NICHT für den Quellcode (siehe LICENSE / AGPLv3) und nicht
-für die kommerziellen Bestandteile von BAM Enterprise
-(Multi-Tenant-API, White-Label, Hosting, Updates, Support) gemäß
-brain-media.de.
+Sie gilt NICHT für den Quellcode (siehe LICENSE / AGPLv3).

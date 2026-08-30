@@ -34,7 +34,7 @@ und das SSRN-Paper (#5278869).
 
 | Datei | Inhalt |
 |---|---|
-| `bam_database.json` | Das BAM-Datenmodell: 44 BAM-Objekte (Requirement -> Evidence) fuer NIS-2, DORA, CRA, EU AI Act sowie Cross-Framework-Verknuepfungen, plus ISO 27001:2022 Control-Mapping (93 Controls) |
+| `bam_database.json` | Das BAM-Datenmodell: 58 BAM-Objekte (Requirement -> Evidence) fuer NIS-2, DORA, CRA, EU AI Act, DSGVO sowie Cross-Framework-Verknuepfungen, plus ISO 27001:2022 Control-Mapping (93 Controls) |
 | `bam_dashboard.html` | Single-User-Cockpit zur Anzeige und Bearbeitung der BAM-Objekte |
 | `bam_api_local.py` | Minimale lokale REST-API (Flask) fuer das Dashboard |
 | `bam_rag.py` | RAG-Anbindung an ein lokales LLM (LM Studio) - "Fragen Sie BAM" |
@@ -64,9 +64,6 @@ und das SSRN-Paper (#5278869).
 
 **Nicht (oder noch nicht) in BAM Core enthalten:** ISO 42001, Cyber
 Solidarity Act (CSA), vollstaendige ISO-27001-Abdeckung (100 %).
-Diese Frameworks sowie kontinuierliche Updates, Multi-Tenant-Betrieb,
-White-Label und Hosting sind Bestandteil von **BAM Enterprise**
-(siehe unten).
 
 Contributions zur Erweiterung der Framework-Abdeckung sind
 willkommen - siehe [CONTRIBUTING.md](docs/CONTRIBUTING.md).
@@ -123,26 +120,6 @@ Dieses Repository nutzt **zwei Lizenzen**:
 
 Bitte entfernen Sie die Copyright- und Lizenzhinweise in den
 Dateien nicht (siehe AGPLv3 §4/§5 und CC BY-SA 4.0 §3).
-
----
-
-## BAM Enterprise
-
-Fuer Unternehmen, die BAM produktiv einsetzen wollen, ohne eigene
-Infrastruktur zu betreiben:
-
-| | BAM Core (dieses Repo) | BAM Enterprise |
-|---|---|---|
-| Frameworks | NIS-2, DORA, CRA, EU AI Act, DSGVO, ISO 27001 (74 %) | + ISO 42001, CSA, ISO 27001 (100 %) |
-| Betrieb | Selbst gehostet (lokal/eigener Server) | Dedizierte Instanz, DE-Standorte (Saarbruecken/Frankfurt), DSGVO-konform |
-| API | Single-User, lokal | Multi-Tenant, White-Label, REST/Webhooks |
-| Updates | Manuell (Community/Releases) | Kontinuierliche Experten-Updates |
-| Integration | - | Konnektoren fuer GRC, ITSM, SIEM, ERP |
-| Support | Community (GitHub Issues) | SLA, persoenlicher Support |
-| KI/RAG | Basis-RAG (lokal, `bam_rag.py`) | RAG v2 (Embeddings, semantische Suche, Multi-Tenant) |
-
-Mehr Informationen, kostenloser Quick Check und Kontakt:
-**[brain-media.de](https://brain-media.de)**
 
 ---
 
