@@ -2,7 +2,7 @@
 
 **Offenes Datenmodell und Referenzimplementierung fuer
 Multi-Framework-Compliance (NIS-2, DORA, CRA, EU AI Act, ISO 27001).
-Version 2.0: BAM Core 2.0: Regulatory Change Management (AI-Omnibus implementiert)**
+BAM Core 2.0: Regulatory Change Management (AI-Omnibus implementiert)**
 
 Entwickelt von [Dr. Holger Reibold](https://brain-media.de) /
 [Brain-Media.de](https://brain-media.de) auf Basis von 23 Jahren
