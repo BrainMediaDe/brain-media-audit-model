@@ -5092,6 +5092,86 @@
         "5.9",
         "5.34"
       ]
+    },
+    {
+      "bam_id": "AIACT-090-OMNIBUS-FRIST",
+      "regulation": "EU AI Act",
+      "article": "Art. 6-9 (geändert durch VO (EU) 2026/1744)",
+      "status": "ausstehend",
+      "tags": [
+        "digital-omnibus",
+        "fristverschiebung",
+        "hochrisiko",
+        "uebergangsfrist"
+      ],
+      "cross_refs": [
+        "AIACT-002-KLASSIFIZIERUNG"
+      ],
+      "requirement": {
+        "text": "Die Hochrisiko-Pflichten des EU AI Act wurden durch den AI-Omnibus (VO (EU) 2026/1744, in Kraft seit 27.07.2026) zeitlich gestaffelt: Anhang-III-Systeme (eigenständige Hochrisiko-KI) bis 02.12.2027, Anhang-I-Systeme (eingebettete Hochrisiko-KI) bis 02.08.2028. Die inhaltlichen Anforderungen selbst bleiben unverändert – nur der Zeitplan ändert sich.",
+        "source": "Verordnung (EU) 2026/1744 (AI-Omnibus), Amtsblatt vom 24.07.2026",
+        "priority": "mittel"
+      },
+      "gap_check": {
+        "question": "Ist bekannt, welcher der beiden neuen Stichtage (02.12.2027 oder 02.08.2028) für die eigenen Hochrisiko-KI-Systeme gilt, und ist die interne Roadmap entsprechend angepasst?",
+        "if_yes": "Roadmap regelmäßig gegen den offiziellen Digital-Omnibus-Status prüfen, da der breitere Digital-Omnibus (DSGVO, ePrivacy, Data Act, NIS-2, DORA, CER) zum Stand dieses Datensatzes weiterhin in Verhandlung ist.",
+        "if_no": "Klassifizierung aus AIACT-002 heranziehen und der jeweiligen Anhangs-Kategorie zuordnen.",
+        "if_partial": "Nur teilweise bekannt – Systeminventar gegen Anhang I/III abgleichen."
+      },
+      "remediation": {
+        "summary": "Interne Compliance-Roadmap auf die gestaffelten Omnibus-Fristen abstimmen, ohne die inhaltliche Vorbereitung zu verlangsamen",
+        "steps": [
+          "Pro Hochrisiko-System pruefen: Anhang I (eingebettet) oder Anhang III (eigenstaendig)?",
+          "Fuer Anhang-III-Systeme: 02.12.2027 als Zieldatum in die Roadmap uebernehmen",
+          "Fuer Anhang-I-Systeme: 02.08.2028 als Zieldatum uebernehmen",
+          "Vorbereitung NICHT verlangsamen: die inhaltlichen Pflichten (Risikomanagement, Dokumentation) bleiben identisch"
+        ],
+        "effort": "gering",
+        "deadline": "kurzfristig",
+        "tools": [
+          "Digital-Omnibus-Statusuebersicht (siehe digital_omnibus_status)"
+        ],
+        "book_reference": {
+          "book": "EU AI Act in der Praxis",
+          "chapter": "Kap. 10.5 – Umgang mit regulatorischer Unsicherheit"
+        },
+        "cost_estimate": {
+          "pt_min": 0.5,
+          "pt_max": 1,
+          "note": "Reine Roadmap-Anpassung, keine inhaltliche Zusatzarbeit"
+        }
+      },
+      "risk": {
+        "likelihood": 2,
+        "impact": 2,
+        "score": 4,
+        "description": "Verwechslung der beiden neuen Stichtage fuehrt zu falscher interner Priorisierung, nicht zu Bussgeldrisiko direkt.",
+        "regulatory_fine": {
+          "max_eur": 35000000,
+          "max_pct": "7% Jahresumsatz",
+          "basis": "Unveraendert Art. 99 EU AI Act - der Omnibus aendert nur den Zeitplan, nicht die Bussgeldrahmen"
+        }
+      },
+      "control": {
+        "measure": "Zieldatum pro Hochrisiko-System dokumentieren (02.12.2027 oder 02.08.2028) und mit AIACT-002-Klassifizierung verknuepfen",
+        "priority": "mittel",
+        "type": "organisatorisch"
+      },
+      "evidence": {
+        "type": "Roadmap-Dokument mit Zieldatum je System",
+        "template": "Omnibus-Fristen-Uebersicht",
+        "audit_ready": true
+      },
+      "iso27001_mapping": {
+        "controls": [
+          "A.5.1.1"
+        ],
+        "coverage": "teilweise",
+        "note": "Reine Terminplanung, kein eigenstaendiger ISO-Control-Bezug."
+      },
+      "iso27001_2022_controls": [
+        "5.1"
+      ]
     }
   ],
   "iso27001_2022": {
@@ -5960,5 +6040,112 @@
         "note": "IAM-Kontrollen für Prüfer-Zugänge und strukturierter Pentest-Prozess decken 8.34 ab."
       }
     }
+  },
+  "regulatory_change_management": {
+    "_note": "Tracks in-progress regulatory change procedures across all frameworks, decoupled from the main BAM objects. Policy: no speculative requirement objects are created for undecided procedures - see policy_rule per entry. Future amendments (NIS-2, DORA, CRA, etc.) follow the same schema.",
+    "schema_version": "2.0",
+    "last_update": "2026-08-30",
+    "tracked_initiatives": [
+      {
+        "change_id": "REG-CHANGE-2026-001",
+        "title": "AI-Omnibus (Fristen-Staffelung EU AI Act)",
+        "framework_affected": "EU AI Act",
+        "legal_basis": "VO (EU) 2026/1744",
+        "status": "effective",
+        "effective_date": "2026-07-27",
+        "impact_summary": "Inhaltliche Pflichten bleiben identisch; Uebergangsfristen fuer Hochrisiko-KI werden gestaffelt (Anhang III: 02.12.2027, Anhang I: 02.08.2028).",
+        "affected_bam_ids": [
+          "AIACT-002-KLASSIFIZIERUNG",
+          "AIACT-026-BETREIBER",
+          "AIACT-090-OMNIBUS-FRIST"
+        ],
+        "deltas": [
+          {
+            "bam_id": "AIACT-002-KLASSIFIZIERUNG",
+            "change_type": "deadline",
+            "requirement_impact": "none",
+            "control_impact": "none",
+            "evidence_impact": "none",
+            "action_required": "Zieldatum in Roadmap uebernehmen (siehe AIACT-090)",
+            "human_review_required": false
+          },
+          {
+            "bam_id": "AIACT-026-BETREIBER",
+            "change_type": "deadline",
+            "requirement_impact": "none",
+            "control_impact": "none",
+            "evidence_impact": "none",
+            "action_required": "Zieldatum in Roadmap uebernehmen (siehe AIACT-090)",
+            "human_review_required": false
+          },
+          {
+            "bam_id": "AIACT-090-OMNIBUS-FRIST",
+            "change_type": "deadline",
+            "requirement_impact": "new_object",
+            "control_impact": "none",
+            "evidence_impact": "none",
+            "action_required": "Neues Objekt, dokumentiert die Fristverschiebung selbst",
+            "human_review_required": false
+          }
+        ]
+      },
+      {
+        "change_id": "REG-CHANGE-2026-002",
+        "title": "Digital Omnibus (DSGVO / Data Act Harmonisation)",
+        "framework_affected": "DSGVO",
+        "legal_basis": "EU Digital Regulatory Framework Reform (Proposal)",
+        "status": "negotiation",
+        "current_stage": "Trilog (Divergenzen Rat/Parlament, Stand 2026-06-18)",
+        "impact_summary": "Moegliche Neudefinition personenbezogener Daten bei Anonymisierung/Pseudonymisierung; EDSA/EDPB-Kritik seit Februar 2026.",
+        "affected_bam_ids": [
+          "DSGVO-005-GRUNDSAETZE",
+          "DSGVO-032-SICHERHEIT"
+        ],
+        "policy_rule": "No active requirement objects will be injected until official publication in the EU Official Journal.",
+        "deltas": [
+          {
+            "bam_id": "DSGVO-005-GRUNDSAETZE",
+            "change_type": "definition",
+            "requirement_impact": "unklar - haengt vom Verhandlungsausgang ab",
+            "control_impact": "unklar",
+            "evidence_impact": "unklar",
+            "action_required": "Beobachten, keine Aenderung bis Trilog-Ergebnis vorliegt",
+            "human_review_required": true
+          },
+          {
+            "bam_id": "DSGVO-032-SICHERHEIT",
+            "change_type": "definition",
+            "requirement_impact": "unklar - haengt vom Verhandlungsausgang ab",
+            "control_impact": "unklar",
+            "evidence_impact": "unklar",
+            "action_required": "Beobachten, keine Aenderung bis Trilog-Ergebnis vorliegt",
+            "human_review_required": true
+          }
+        ]
+      },
+      {
+        "change_id": "REG-CHANGE-2026-003",
+        "title": "Digital Omnibus (ePrivacy, Data Act, NIS-2/DORA/CER-Anpassungen)",
+        "framework_affected": "NIS-2, DORA, CRA",
+        "legal_basis": null,
+        "status": "negotiation",
+        "current_stage": "Kein bestaetigtes Trilog-Abschlussdatum auffindbar (Stand 2026-06-18)",
+        "impact_summary": "Redaktionelle und teils inhaltliche Anpassungen an NIS-2, DORA und CER im Rahmen des breiteren Digital Omnibus.",
+        "affected_bam_ids": [],
+        "policy_rule": "No active requirement objects will be injected until official publication in the EU Official Journal.",
+        "deltas": []
+      }
+    ],
+    "status_lifecycle": [
+      "proposal",
+      "negotiation",
+      "adopted",
+      "published",
+      "effective",
+      "withdrawn",
+      "repealed",
+      "superseded"
+    ],
+    "_delta_note": "'deltas' enthaelt die fachliche Einordnung pro betroffenem Objekt. Diese Einordnung ist manuell kuratiert, nicht automatisch inferiert - 'change_type' und '*_impact' spiegeln eine redaktionelle Fachpruefung, kein automatisiertes Textverstehen der zugrunde liegenden Rechtsakte."
   }
 }

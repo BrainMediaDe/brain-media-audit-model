@@ -15,6 +15,10 @@
   unter /api/v2 (z. B. ein einfaches Flask-Skript, das
   bam_database.json einliest). Eine einfache Beispiel-API fuer den
   lokalen Gebrauch finden Sie unter deploy/ bzw. in bam_api_local.py.
+
+  Kein Login, kein Tarif-Modell: BAM Core ist Single-User und lokal.
+  Gap-Check-Antworten und Score-Verlauf werden im Browser
+  (localStorage) gespeichert, nicht auf einem Server.
 -->
 <html lang="de">
 <head>
@@ -37,21 +41,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
 
-#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-.login-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:40px;width:100%;max-width:420px;box-shadow:0 4px 24px rgba(15,17,23,.10);}
-.login-brand{font-size:18px;font-weight:600;margin-bottom:4px;}
-.login-brand .dot{color:#c00000;}
-.login-sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
-.field-label{font-size:12px;font-weight:600;color:var(--steel);margin-bottom:6px;display:block;}
-.field-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:14px;margin-bottom:12px;transition:border-color .15s;outline:none;}
-.field-input:focus{border-color:var(--blue2);}
-.primary-btn{width:100%;padding:11px;background:var(--blue2);color:var(--white);border:none;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;}
-.primary-btn:hover{background:var(--blue);}
-.error-box{background:var(--red-lt);color:var(--red);padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:12px;display:none;}
-.hint{font-size:11px;color:var(--muted);margin-top:16px;text-align:center;line-height:1.7;}
-.hint code{background:var(--bg);padding:1px 5px;border-radius:3px;font-family:var(--mono);}
-
-#app-screen{display:none;min-height:100vh;}
+#app-screen{min-height:100vh;}
 .nav{background:var(--ink);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100;}
 .nav-brand{font-size:15px;font-weight:600;color:var(--white);}
 .nav-brand .dot{color:#c00000;}
@@ -65,7 +55,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:14p
 .tab{padding:13px 18px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
 .tab:hover{color:var(--ink);}
 .tab.active{color:var(--blue2);border-bottom-color:var(--blue2);font-weight:600;}
-.tab.locked{opacity:.4;}
 
 .content{max-width:1200px;margin:0 auto;padding:28px;}
 
@@ -102,6 +91,8 @@ tr:hover td{background:rgba(0,0,0,.01);}
 .b-hoch{background:var(--amber-lt);color:var(--amber);}
 .b-mittel{background:var(--blue-lt);color:var(--blue2);}
 .b-gering{background:var(--green-lt);color:var(--green);}
+.b-decided{background:var(--green-lt);color:var(--green);}
+.b-negotiation{background:var(--amber-lt);color:var(--amber);}
 
 .gap-item{padding:18px 20px;border-bottom:1px solid var(--border);}
 .gap-item:last-child{border-bottom:none;}
@@ -138,10 +129,15 @@ tr:hover td{background:rgba(0,0,0,.01);}
 .a-err{background:var(--red-lt);color:var(--red);border:1px solid rgba(192,57,43,.2);}
 .a-info{background:var(--blue-lt);color:var(--blue2);border:1px solid rgba(34,81,245,.2);}
 
-.upgrade-box{background:var(--blue-lt);border:1px solid rgba(34,81,245,.2);border-radius:10px;padding:24px;text-align:center;margin:20px 0;}
-.upgrade-box h3{font-size:15px;font-weight:700;color:var(--blue2);margin-bottom:6px;}
-.upgrade-box p{font-size:13px;color:var(--steel);margin-bottom:12px;}
-.upgrade-link{display:inline-block;background:var(--blue2);color:var(--white);padding:9px 24px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;}
+.rc-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px;}
+.rc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px;}
+.rc-title{font-size:14px;font-weight:700;}
+.rc-meta{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.rc-summary{font-size:13px;color:var(--steel);margin-bottom:10px;}
+.rc-btn{font-size:12px;font-weight:600;color:var(--blue2);background:var(--blue-lt);border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:var(--sans);}
+.rc-impact-box{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.rc-obj-chip{display:inline-block;font-family:var(--mono);font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:3px 8px;margin:2px;}
+.reg-warn{color:var(--amber);font-size:11px;margin-left:6px;}
 
 .spin{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--blue2);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px;}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -156,31 +152,13 @@ tr:hover td{background:rgba(0,0,0,.01);}
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-brand">Brain-Media<span class="dot">.</span>de</div>
-    <div class="login-sub">BAM Compliance Dashboard · Knowledge as a Service</div>
-    <div class="error-box" id="login-err"></div>
-    <label class="field-label">API-Key</label>
-    <input class="field-input" id="key-input" type="password" placeholder="bam-business-..." autocomplete="off">
-    <button class="primary-btn" onclick="doLogin()">Anmelden →</button>
-    <div class="hint">
-      Ihren API-Key erhalten Sie nach dem Kauf per E-Mail.<br>
-      Lokal testen: <code>python bam_api_v2.py --setup</code><br>
-      API läuft auf: <code id="api-url-hint"></code>
-    </div>
-  </div>
-</div>
-
 <!-- APP -->
 <div id="app-screen">
   <nav class="nav">
     <div class="nav-brand">Brain-Media<span class="dot">.</span>de &nbsp;·&nbsp; BAM Dashboard</div>
     <div class="nav-right">
-      <span class="plan-tag" id="plan-tag">–</span>
-      <span class="nav-user" id="nav-user">–</span>
-      <button class="logout-btn" onclick="logout()">Abmelden</button>
+      <span class="plan-tag">BAM CORE · LOKAL</span>
+      <button class="logout-btn" onclick="init()">Neu laden</button>
     </div>
   </nav>
 
@@ -190,6 +168,7 @@ tr:hover td{background:rgba(0,0,0,.01);}
     <div class="tab" data-tab="gapcheck" onclick="showTab(this,'gapcheck')">Gap-Check</div>
     <div class="tab" data-tab="remediation" onclick="showTab(this,'remediation')">Remediation</div>
     <div class="tab" data-tab="iso" onclick="showTab(this,'iso')">ISO 27001</div>
+    <div class="tab" data-tab="regchanges" onclick="showTab(this,'regchanges')">Regulatory Changes</div>
     <div class="tab" data-tab="history" onclick="showTab(this,'history')">Score-Verlauf</div>
   </div>
 
@@ -200,27 +179,27 @@ tr:hover td{background:rgba(0,0,0,.01);}
     <div id="pane-gapcheck" style="display:none"></div>
     <div id="pane-remediation" style="display:none"></div>
     <div id="pane-iso" style="display:none"></div>
+    <div id="pane-regchanges" style="display:none"></div>
     <div id="pane-history" style="display:none"></div>
   </div>
 </div>
 
 <script>
 // ─────────────────────────────────────────────────────────────────
-// CONFIG – auto-detect local vs production
+// CONFIG
 // ─────────────────────────────────────────────────────────────────
 const IS_LOCAL = ['localhost','127.0.0.1'].includes(location.hostname);
 const API_BASE = IS_LOCAL ? 'http://localhost:5000/api/v2' : '/api/v2';
-document.getElementById('api-url-hint').textContent = API_BASE;
 
-let KEY='', PLAN='', ME=null, OBJECTS=[], GAPS={};
+let OBJECTS = [], REGCHANGES = [], GAPS = {};
 
 // ─────────────────────────────────────────────────────────────────
-// API
+// API (kein Login, keine Tarife - BAM Core ist lokal und Single-User)
 // ─────────────────────────────────────────────────────────────────
 async function req(path, method='GET', body=null) {
   const r = await fetch(API_BASE+path, {
     method,
-    headers:{'X-API-Key':KEY,'Content-Type':'application/json'},
+    headers:{'Content-Type':'application/json'},
     body: body ? JSON.stringify(body) : undefined
   });
   const d = await r.json();
@@ -229,35 +208,24 @@ async function req(path, method='GET', body=null) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// LOGIN / LOGOUT
+// LOKALE PERSISTENZ (Browser-localStorage statt Server-Backend -
+// bam_api_local.py ist bewusst zustandslos, siehe dessen Docstring)
 // ─────────────────────────────────────────────────────────────────
-async function doLogin() {
-  KEY = document.getElementById('key-input').value.trim();
-  if (!KEY) return;
-  const err = document.getElementById('login-err');
-  err.style.display = 'none';
-  try {
-    ME = await req('/me');
-    PLAN = ME.plan;
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app-screen').style.display = 'block';
-    document.getElementById('plan-tag').textContent = PLAN.toUpperCase();
-    document.getElementById('nav-user').textContent =
-      ME.name + (ME.company ? ' · ' + ME.company : '');
-    await init();
-  } catch(e) {
-    err.textContent = '✗ ' + e.message;
-    err.style.display = 'block';
-    KEY = '';
-  }
+function loadGaps() {
+  try { return JSON.parse(localStorage.getItem('bam_gaps')||'{}'); }
+  catch(e) { return {}; }
 }
-document.getElementById('key-input').onkeydown = e => { if(e.key==='Enter') doLogin(); };
-
-function logout() {
-  KEY=''; PLAN=''; ME=null; OBJECTS=[]; GAPS={};
-  document.getElementById('app-screen').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('key-input').value='';
+function saveGaps() {
+  localStorage.setItem('bam_gaps', JSON.stringify(GAPS));
+}
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem('bam_history')||'[]'); }
+  catch(e) { return []; }
+}
+function appendHistory(entry) {
+  const h = loadHistory();
+  h.push(entry);
+  localStorage.setItem('bam_history', JSON.stringify(h));
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -265,13 +233,20 @@ function logout() {
 // ─────────────────────────────────────────────────────────────────
 async function init() {
   try {
-    const [summary, objects] = await Promise.all([req('/summary'), req('/objects')]);
-    OBJECTS = objects.objects || [];
-    buildOverview(summary);
+    const [objects, rc] = await Promise.all([
+      req('/objects'),
+      req('/regulatory-changes').catch(()=>({tracked_initiatives:[]}))
+    ]);
+    OBJECTS = Array.isArray(objects) ? objects : (objects.objects||[]);
+    REGCHANGES = rc.tracked_initiatives||[];
+    GAPS = loadGaps();
+    buildOverview();
     buildControls();
     buildGapCheck();
+    buildRemediation(currentGaps());
     buildISO();
-    await buildHistory();
+    buildRegChanges();
+    buildHistory();
   } catch(e) { msg('err', e.message); }
 }
 
@@ -286,26 +261,71 @@ function showTab(el, name) {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// GAP-STATE HELPERS (ersetzen den frueheren POST /gap-check)
+// ─────────────────────────────────────────────────────────────────
+function currentGaps() {
+  // Liefert alle beantworteten Luecken (teil/nein) im selben Format,
+  // das buildRemediation() erwartet.
+  return OBJECTS
+    .filter(o => o.gap_check?.question && GAPS[o.bam_id] && GAPS[o.bam_id] !== 'ja')
+    .map(o => ({
+      bam_id: o.bam_id,
+      priority: o.control?.priority || 'mittel',
+      action: GAPS[o.bam_id]==='nein' ? o.gap_check.if_no : o.gap_check.if_partial,
+      score: o.risk?.score || 0
+    }));
+}
+
+function computeSummary() {
+  const withQ = OBJECTS.filter(o => o.gap_check?.question);
+  const total = withQ.length;
+  const answered = withQ.filter(o => GAPS[o.bam_id]).length;
+  const points = withQ.reduce((sum,o) => {
+    const a = GAPS[o.bam_id];
+    return sum + (a==='ja'?1 : a==='teil'?0.5 : 0);
+  }, 0);
+  const score = total ? Math.round(points/total*100) : 0;
+  const risks = OBJECTS.filter(o=>o.risk?.score!=null).map(o=>o.risk.score);
+  const avgRisk = risks.length ? Math.round(risks.reduce((a,b)=>a+b,0)/risks.length*10)/10 : 0;
+  const gaps = currentGaps();
+  const sofort = gaps
+    .map(g => ({...g, obj: OBJECTS.find(o=>o.bam_id===g.bam_id)}))
+    .sort((a,b)=>(b.score||0)-(a.score||0))
+    .slice(0,6)
+    .map(g => ({bam_id:g.bam_id, measure:g.obj?.control?.measure, score:g.score}));
+  return {compliance_score:score, total_objects:OBJECTS.length, answered, avg_risk_score:avgRisk, sofort_actions:sofort, gaps:gaps.length};
+}
+
+// ─────────────────────────────────────────────────────────────────
 // OVERVIEW
 // ─────────────────────────────────────────────────────────────────
-function buildOverview(s) {
+function buildOverview() {
+  const s = computeSummary();
   const sc = s.compliance_score;
   const col = sc>=75?'var(--green)':sc>=50?'var(--amber)':'var(--red)';
-  const REGS = ['NIS-2','DORA','CRA','EU AI Act'];
-  const bars = REGS.map(r => `
-    <div class="score-row">
+  const REGS = [...new Set(OBJECTS.map(o=>o.regulation))].filter(r=>r!=='CROSS');
+  const bars = REGS.map(r => {
+    const regObjs = OBJECTS.filter(o=>o.regulation===r && o.gap_check?.question);
+    const regAns = regObjs.filter(o=>GAPS[o.bam_id]);
+    const regPts = regObjs.reduce((s2,o)=>{const a=GAPS[o.bam_id];return s2+(a==='ja'?1:a==='teil'?0.5:0);},0);
+    const regSc = regObjs.length ? Math.round(regPts/regObjs.length*100) : 0;
+    const rc = regSc>=75?'var(--green)':regSc>=50?'var(--amber)':'var(--red)';
+    return `<div class="score-row">
       <div class="s-reg">${r}</div>
-      <div class="s-track"><div class="s-fill" style="width:0%;background:${col}" data-w="${sc}"></div></div>
-      <div class="s-pct" style="color:${col}">${sc}%</div>
-    </div>`).join('');
+      <div class="s-track"><div class="s-fill" style="width:0%;background:${rc}" data-w="${regSc}"></div></div>
+      <div class="s-pct" style="color:${rc}">${regSc}%</div>
+    </div>`;
+  }).join('');
 
-  const sofort = (s.sofort_actions||[]).slice(0,6).map(a =>
+  const sofort = (s.sofort_actions||[]).map(a =>
     `<tr><td style="font-family:var(--mono);font-size:11px">${a.bam_id}</td>
      <td style="font-size:12px">${a.measure||'–'}</td>
      <td><span class="badge b-sofort">Sofort</span></td>
      <td style="font-family:var(--mono)">${a.score}/9</td></tr>`
   ).join('') || `<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:20px">
     Kein Gap-Check durchgeführt – Tab "Gap-Check" starten</td></tr>`;
+
+  const activeRC = REGCHANGES.filter(i=>i.status==='effective' && i.affected_bam_ids?.length).length;
 
   document.getElementById('pane-overview').innerHTML = `
     <div class="stat-row">
@@ -316,14 +336,15 @@ function buildOverview(s) {
         <div class="stat-num">${s.total_objects}</div>
         <div class="stat-sub">Beantwortet: ${s.answered}</div></div>
       <div class="stat-card"><div class="stat-lbl">Regulierungen</div>
-        <div class="stat-num">4</div>
-        <div class="stat-sub">NIS-2 · DORA · CRA · EU AI Act</div></div>
+        <div class="stat-num">${REGS.length}</div>
+        <div class="stat-sub">${REGS.join(' · ')}</div></div>
       <div class="stat-card"><div class="stat-lbl">Ø Risiko-Score</div>
         <div class="stat-num">${s.avg_risk_score}</div>
         <div class="stat-sub">Likelihood × Impact (max 9)</div></div>
     </div>
     <div class="panel"><div class="panel-head"><h3>Score je Regulierung</h3></div>
       <div class="panel-body">${bars}</div></div>
+    ${activeRC ? `<div class="alert a-info">${activeRC} entschiedene regulatorische Änderung${activeRC!==1?'en':''} betrifft/betreffen bestehende Controls – siehe Tab "Regulatory Changes".</div>` : ''}
     <div class="panel"><div class="panel-head"><h3>Sofort-Maßnahmen (höchstes Risiko)</h3></div>
       <table><thead><tr><th>BAM-ID</th><th>Maßnahme</th><th>Priorität</th><th>Risiko</th></tr></thead>
       <tbody>${sofort}</tbody></table></div>`;
@@ -334,19 +355,26 @@ function buildOverview(s) {
 // CONTROLS
 // ─────────────────────────────────────────────────────────────────
 let cFilter='alle';
+function affectedIdSet() {
+  const s = new Set();
+  REGCHANGES.forEach(i => (i.affected_bam_ids||[]).forEach(id=>s.add(id)));
+  return s;
+}
 function buildControls(f='alle') {
   cFilter=f;
   const list = f==='alle' ? OBJECTS : OBJECTS.filter(o=>o.regulation===f);
-  const regs = ['alle','NIS-2','DORA','CRA','EU AI Act','CROSS'];
+  const regs = ['alle', ...new Set(OBJECTS.map(o=>o.regulation))];
   const ftrs = regs.map(r=>
     `<button class="f-btn ${f===r?'on':''}" onclick="buildControls('${r}')">${r}</button>`
   ).join('');
+  const affected = affectedIdSet();
   const rows = list.map(o => {
     const p = o.control?.priority||'–';
     const bc = p==='sofort'?'b-sofort':p==='hoch'?'b-hoch':p==='mittel'?'b-mittel':'b-gering';
     const txt = (o.requirement?.text||'–').substring(0,90)+'…';
+    const warn = affected.has(o.bam_id) ? '<span class="reg-warn" title="Von einer regulatorischen Aenderung betroffen">⚠</span>' : '';
     return `<tr>
-      <td style="font-family:var(--mono);font-size:11px">${o.bam_id}</td>
+      <td style="font-family:var(--mono);font-size:11px">${o.bam_id}${warn}</td>
       <td><strong style="color:var(--blue2)">${o.regulation}</strong><br><span style="font-size:11px;color:var(--muted)">${o.article||''}</span></td>
       <td style="font-size:12px;max-width:280px">${txt}</td>
       <td><span class="badge ${bc}">${p}</span></td>
@@ -365,10 +393,6 @@ function buildControls(f='alle') {
 // GAP CHECK
 // ─────────────────────────────────────────────────────────────────
 function buildGapCheck() {
-  if (!['business','enterprise'].includes(PLAN)) {
-    document.getElementById('pane-gapcheck').innerHTML = upgrade('Gap-Check');
-    return;
-  }
   const items = OBJECTS.filter(o=>o.gap_check?.question).map(o => {
     const ans = GAPS[o.bam_id]||null;
     return `<div class="gap-item">
@@ -382,10 +406,10 @@ function buildGapCheck() {
   }).join('');
   const n = Object.keys(GAPS).length;
   document.getElementById('pane-gapcheck').innerHTML = `
-    <div class="alert a-info">Beantworten Sie alle Fragen und speichern Sie – Ihr Score wird aktualisiert.</div>
+    <div class="alert a-info">Beantworten Sie alle Fragen und speichern Sie – Ihr Score wird aktualisiert. Antworten werden lokal in diesem Browser gespeichert.</div>
     <div class="panel">${items}
       <div class="gap-footer">
-        <span id="gap-counter" style="font-size:13px;color:var(--muted)">${n} von ${OBJECTS.length} beantwortet</span>
+        <span id="gap-counter" style="font-size:13px;color:var(--muted)">${n} von ${OBJECTS.filter(o=>o.gap_check?.question).length} beantwortet</span>
         <button class="save-btn" id="save-gap" onclick="submitGap()" ${n===0?'disabled':''}>Score berechnen →</button>
       </div></div>`;
 }
@@ -395,30 +419,27 @@ function setGap(id, val, btn) {
   btn.parentElement.querySelectorAll('.g-btn').forEach(b=>{b.className='g-btn';});
   btn.classList.add('s-'+val);
   const n=Object.keys(GAPS).length;
+  const totalQ = OBJECTS.filter(o=>o.gap_check?.question).length;
   const c=document.getElementById('gap-counter');
-  if(c) c.textContent=n+' von '+OBJECTS.length+' beantwortet';
+  if(c) c.textContent=n+' von '+totalQ+' beantwortet';
   const s=document.getElementById('save-gap');
   if(s) s.removeAttribute('disabled');
 }
 
-async function submitGap() {
-  const answers = Object.entries(GAPS).map(([bam_id,answer])=>({bam_id,answer}));
-  try {
-    const r = await req('/gap-check','POST',{answers});
-    msg('ok',`Score gespeichert: ${r.compliance_score}% · ${r.gaps} Lücken identifiziert`);
-    buildRemediation(r.all_gaps||[]);
-    await init();
-  } catch(e) { msg('err',e.message); }
+function submitGap() {
+  saveGaps();
+  const s = computeSummary();
+  appendHistory({recorded_at: new Date().toISOString(), score: s.compliance_score, gaps: s.gaps});
+  msg('ok', `Score gespeichert: ${s.compliance_score}% · ${s.gaps} Lücken identifiziert`);
+  buildOverview();
+  buildRemediation(currentGaps());
+  buildHistory();
 }
 
 // ─────────────────────────────────────────────────────────────────
 // REMEDIATION
 // ─────────────────────────────────────────────────────────────────
 function buildRemediation(gaps) {
-  if (!['business','enterprise'].includes(PLAN)) {
-    document.getElementById('pane-remediation').innerHTML = upgrade('Remediation');
-    return;
-  }
   if (!gaps.length) {
     document.getElementById('pane-remediation').innerHTML =
       '<div class="alert a-info">Gap-Check durchführen um Remediations zu laden.</div>';
@@ -463,27 +484,20 @@ function buildRemediation(gaps) {
 // ISO 27001
 // ─────────────────────────────────────────────────────────────────
 function buildISO() {
-  if (!['business','enterprise'].includes(PLAN)) {
-    document.getElementById('pane-iso').innerHTML = upgrade('ISO 27001 Annex A Mapping');
-    return;
-  }
   const isoMap={};
   OBJECTS.forEach(o=>{
-    const m=o.iso27001_mapping||{};
-    const cov=m.coverage||'teilweise';
-    (m.controls||[]).forEach(c=>{
-      if(!isoMap[c]) isoMap[c]={cov,ids:[]};
-      isoMap[c].ids.push(o.bam_id);
+    const m = o.iso27001_mapping;
+    if (!m?.controls) return;
+    m.controls.forEach(c=>{
+      if (!isoMap[c] || (m.coverage==='vollständig')) {
+        isoMap[c] = {cov:m.coverage, src:o.bam_id};
+      }
     });
   });
-  const sorted=Object.keys(isoMap).sort((a,b)=>{
-    const[ma,na]=a.split('.').map(Number);
-    const[mb,nb]=b.split('.').map(Number);
-    return ma!==mb?ma-mb:na-nb;
-  });
-  const chips=sorted.map(c=>{
-    const{cov,ids}=isoMap[c];
-    return `<div class="iso-chip ${cov==='vollständig'?'full':'part'}" title="${ids.join(', ')}">${c}</div>`;
+  const sorted = Object.keys(isoMap).sort();
+  const chips = sorted.map(c=>{
+    const full = isoMap[c].cov==='vollständig';
+    return `<div class="iso-chip ${full?'full':'part'}" title="${isoMap[c].src}">${c}</div>`;
   }).join('');
   const full=sorted.filter(c=>isoMap[c].cov==='vollständig').length;
   document.getElementById('pane-iso').innerHTML = `
@@ -508,98 +522,160 @@ function buildISO() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// HISTORY
+// REGULATORY CHANGES (neu in BAM Core 2.0)
 // ─────────────────────────────────────────────────────────────────
-async function buildHistory() {
-  try {
-    const h = await req('/score-history');
-    const list = (h.history||[]).slice().reverse(); // älteste zuerst
-    if(!list.length){
-      document.getElementById('pane-history').innerHTML=
-        '<div class="alert a-info">Noch kein Score-Verlauf. Gap-Check durchführen.</div>';
-      return;
-    }
-
-    const W=680,H=220,PL=44,PR=16,PT=20,PB=32;
-    const iW=W-PL-PR, iH=H-PT-PB;
-    const n=list.length;
-    const scores=list.map(e=>e.score);
-    const dates=list.map(e=>new Date(e.recorded_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}));
-    const xOf=i=>PL+(n>1?i*(iW/(n-1)):iW/2);
-    const yOf=s=>PT+iH-(s/100)*iH;
-
-    const area=[`M ${xOf(0)},${yOf(scores[0])}`,
-      ...scores.slice(1).map((s,i)=>`L ${xOf(i+1)},${yOf(s)}`),
-      `L ${xOf(n-1)},${PT+iH}`,`L ${xOf(0)},${PT+iH}`,'Z'].join(' ');
-    const line=[`M ${xOf(0)},${yOf(scores[0])}`,
-      ...scores.slice(1).map((s,i)=>`L ${xOf(i+1)},${yOf(s)}`)].join(' ');
-
-    const dots=scores.map((s,i)=>{
-      const col=s>=75?'#0F7A4E':s>=50?'#9A5F00':'#C0392B';
-      const x=xOf(i),y=yOf(s),ly=y>PT+16?y-10:y+18;
-      return `<circle cx="${x}" cy="${y}" r="5" fill="${col}" stroke="#fff" stroke-width="2"/>
-        <text x="${x}" y="${ly}" text-anchor="middle" font-size="11" font-weight="600" fill="${col}">${s}%</text>`;
-    }).join('');
-
-    const xLabels=dates.map((d,i)=>
-      `<text x="${xOf(i)}" y="${PT+iH+16}" text-anchor="middle" font-size="10" fill="#8892AA">${d}</text>`
-    ).join('');
-
-    const yLines=[0,25,50,75,100].map(v=>{
-      const y=yOf(v);
-      const col=v===75?'rgba(15,122,78,.2)':v===50?'rgba(154,95,0,.15)':'rgba(221,226,238,.5)';
-      return `<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="${col}" stroke-width="1" stroke-dasharray="3,3"/>
-        <text x="${PL-6}" y="${y+4}" text-anchor="end" font-size="10" fill="#8892AA">${v}%</text>`;
-    }).join('');
-
-    const svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
-      <defs><linearGradient id="grd" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#2251F5" stop-opacity="0.15"/>
-        <stop offset="100%" stop-color="#2251F5" stop-opacity="0"/>
-      </linearGradient></defs>
-      ${yLines}
-      <path d="${area}" fill="url(#grd)"/>
-      <path d="${line}" fill="none" stroke="#2251F5" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-      ${dots}${xLabels}
-    </svg>`;
-
-    const lastScore=scores[n-1], firstScore=scores[0];
-    const trend=lastScore-firstScore;
-    const trendStr=trend>0?'+'+trend+'%':trend+'%';
-    const trendCol=trend>0?'var(--green)':trend<0?'var(--red)':'var(--muted)';
-
-    const rows=list.slice().reverse().map(e=>{
-      const sc=e.score;
-      const col=sc>=75?'var(--green)':sc>=50?'var(--amber)':'var(--red)';
-      return `<tr><td>${new Date(e.recorded_at).toLocaleDateString('de-DE')}</td>
-        <td style="font-family:var(--mono);font-weight:700;color:${col}">${sc}%</td>
-        <td>${e.gaps} Lücken</td></tr>`;
-    }).join('');
-
-    document.getElementById('pane-history').innerHTML=`
-      <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
-        <div class="stat-card"><div class="stat-lbl">Aktueller Score</div>
-          <div class="stat-num" style="color:${lastScore>=75?'var(--green)':lastScore>=50?'var(--amber)':'var(--red)'}">${lastScore}%</div>
-          <div class="stat-sub">Letzter Gap-Check</div></div>
-        <div class="stat-card"><div class="stat-lbl">Entwicklung</div>
-          <div class="stat-num" style="color:${trendCol}">${trendStr}</div>
-          <div class="stat-sub">seit erstem Check</div></div>
-        <div class="stat-card"><div class="stat-lbl">Messungen</div>
-          <div class="stat-num">${n}</div>
-          <div class="stat-sub">Gap-Checks gespeichert</div></div>
-      </div>
-      <div class="panel">
-        <div class="panel-head"><h3>Compliance-Score-Verlauf</h3></div>
-        <div class="panel-body" style="padding:20px 20px 8px">${svg}</div>
-      </div>
-      <div class="panel" style="margin-top:16px">
-        <div class="panel-head"><h3>Alle Messungen</h3></div>
-        <table><thead><tr><th>Datum</th><th>Score</th><th>Lücken</th></tr></thead>
-        <tbody>${rows}</tbody></table>
-      </div>`;
-  } catch(e) {
-    document.getElementById('pane-history').innerHTML=`<div class="alert a-err">${e.message}</div>`;
+function buildRegChanges() {
+  if (!REGCHANGES.length) {
+    document.getElementById('pane-regchanges').innerHTML =
+      '<div class="alert a-info">Keine getrackten regulatorischen Änderungsverfahren in dieser Datenbank.</div>';
+    return;
   }
+  const cards = REGCHANGES.map(i => {
+    const badgeCls = i.status==='effective' ? 'b-decided' : 'b-negotiation';
+    const badgeTxt = i.status==='effective' ? 'Entschieden' : 'In Verhandlung';
+    const n = (i.affected_bam_ids||[]).length;
+    return `<div class="rc-card">
+      <div class="rc-head">
+        <div>
+          <div class="rc-title">${i.title}</div>
+          <div class="rc-meta">${i.framework_affected} ${i.legal_basis?'· '+i.legal_basis:''} ${i.effective_date?'· in Kraft seit '+i.effective_date:''}</div>
+        </div>
+        <span class="badge ${badgeCls}">${badgeTxt}</span>
+      </div>
+      <div class="rc-summary">${i.impact_summary||''}</div>
+      ${i.current_stage?`<div class="rc-meta">Stand: ${i.current_stage}</div>`:''}
+      ${i.policy_rule?`<div class="rc-meta" style="font-style:italic">${i.policy_rule}</div>`:''}
+      ${n ? `<button class="rc-btn" onclick="showImpact('${i.change_id}', this)">Impact anzeigen (${n} direkt betroffen) →</button>
+        <div class="rc-impact-box" id="impact-${i.change_id}" style="display:none"></div>` : ''}
+    </div>`;
+  }).join('');
+  document.getElementById('pane-regchanges').innerHTML = `
+    <div class="alert a-info">BAM Core 2.0: Regulatory Change Management verknüpft laufende Gesetzesänderungen mit den betroffenen Controls – ohne spekulative Inhalte fuer noch nicht entschiedene Verfahren (siehe Policy je Eintrag).</div>
+    ${cards}`;
+}
+
+async function showImpact(changeId, btn) {
+  const box = document.getElementById('impact-'+changeId);
+  if (box.style.display==='block') { box.style.display='none'; return; }
+  box.style.display='block';
+  box.innerHTML = '<span class="spin"></span>Lade Impact-Analyse…';
+  try {
+    const d = await req('/regulatory-changes/'+changeId+'/impact');
+    const dChips = (d.direct_impact||[]).map(o=>`<span class="rc-obj-chip" title="${o.regulation} ${o.article||''}">${o.bam_id}</span>`).join('');
+    const iChips = (d.indirect_impact||[]).map(o=>`<span class="rc-obj-chip" title="${o.regulation} ${o.article||''}">${o.bam_id}</span>`).join('');
+    const deltaRows = (d.deltas||[]).map(dl => {
+      const rev = dl.human_review_required
+        ? '<span class="badge b-hoch">Review nötig</span>'
+        : '<span class="badge b-decided">Kein Review nötig</span>';
+      return `<tr>
+        <td style="font-family:var(--mono);font-size:11px">${dl.bam_id}</td>
+        <td><span class="meta-pill">${dl.change_type}</span></td>
+        <td style="font-size:12px">R: ${dl.requirement_impact}<br>C: ${dl.control_impact}<br>E: ${dl.evidence_impact}</td>
+        <td style="font-size:12px">${dl.action_required||''}</td>
+        <td>${rev}</td>
+      </tr>`;
+    }).join('');
+    box.innerHTML = `
+      <div style="font-size:12px;font-weight:700;color:var(--steel);margin-bottom:6px">Direkt betroffen (${d.direct_count})</div>
+      <div style="margin-bottom:12px">${dChips || '<span style="color:var(--muted)">keine</span>'}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--steel);margin-bottom:6px">Indirekt betroffen, ueber Cross-Refs (${d.indirect_count})</div>
+      <div style="margin-bottom:12px">${iChips || '<span style="color:var(--muted)">keine</span>'}</div>
+      ${deltaRows ? `<div style="font-size:12px;font-weight:700;color:var(--steel);margin-bottom:6px">Fachliche Einordnung je Objekt (manuell kuratiert)</div>
+      <table><thead><tr><th>BAM-ID</th><th>Typ</th><th>Impact (R/C/E)</th><th>Erforderliche Aktion</th><th></th></tr></thead>
+      <tbody>${deltaRows}</tbody></table>` : ''}`;
+  } catch(e) {
+    box.innerHTML = `<div class="alert a-err">${e.message}</div>`;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// HISTORY (lokal, aus localStorage statt Server-Endpunkt)
+// ─────────────────────────────────────────────────────────────────
+function buildHistory() {
+  const list = loadHistory();
+  if(!list.length){
+    document.getElementById('pane-history').innerHTML=
+      '<div class="alert a-info">Noch kein Score-Verlauf. Gap-Check durchführen und Score berechnen.</div>';
+    return;
+  }
+
+  const W=680,H=220,PL=44,PR=16,PT=20,PB=32;
+  const iW=W-PL-PR, iH=H-PT-PB;
+  const n=list.length;
+  const scores=list.map(e=>e.score);
+  const dates=list.map(e=>new Date(e.recorded_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}));
+  const xOf=i=>PL+(n>1?i*(iW/(n-1)):iW/2);
+  const yOf=s=>PT+iH-(s/100)*iH;
+
+  const area=[`M ${xOf(0)},${yOf(scores[0])}`,
+    ...scores.slice(1).map((s,i)=>`L ${xOf(i+1)},${yOf(s)}`),
+    `L ${xOf(n-1)},${PT+iH}`,`L ${xOf(0)},${PT+iH}`,'Z'].join(' ');
+  const line=[`M ${xOf(0)},${yOf(scores[0])}`,
+    ...scores.slice(1).map((s,i)=>`L ${xOf(i+1)},${yOf(s)}`)].join(' ');
+
+  const dots=scores.map((s,i)=>{
+    const col=s>=75?'#0F7A4E':s>=50?'#9A5F00':'#C0392B';
+    const x=xOf(i),y=yOf(s),ly=y>PT+16?y-10:y+18;
+    return `<circle cx="${x}" cy="${y}" r="5" fill="${col}" stroke="#fff" stroke-width="2"/>
+      <text x="${x}" y="${ly}" text-anchor="middle" font-size="11" font-weight="600" fill="${col}">${s}%</text>`;
+  }).join('');
+
+  const xLabels=dates.map((d,i)=>
+    `<text x="${xOf(i)}" y="${PT+iH+16}" text-anchor="middle" font-size="10" fill="#8892AA">${d}</text>`
+  ).join('');
+
+  const yLines=[0,25,50,75,100].map(v=>{
+    const y=yOf(v);
+    const col=v===75?'rgba(15,122,78,.2)':v===50?'rgba(154,95,0,.15)':'rgba(221,226,238,.5)';
+    return `<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="${col}" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="${PL-6}" y="${y+4}" text-anchor="end" font-size="10" fill="#8892AA">${v}%</text>`;
+  }).join('');
+
+  const svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
+    <defs><linearGradient id="grd" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2251F5" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#2251F5" stop-opacity="0"/>
+    </linearGradient></defs>
+    ${yLines}
+    <path d="${area}" fill="url(#grd)"/>
+    <path d="${line}" fill="none" stroke="#2251F5" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${dots}${xLabels}
+  </svg>`;
+
+  const lastScore=scores[n-1], firstScore=scores[0];
+  const trend=lastScore-firstScore;
+  const trendStr=trend>0?'+'+trend+'%':trend+'%';
+  const trendCol=trend>0?'var(--green)':trend<0?'var(--red)':'var(--muted)';
+
+  const rows=list.slice().reverse().map(e=>{
+    const sc=e.score;
+    const col=sc>=75?'var(--green)':sc>=50?'var(--amber)':'var(--red)';
+    return `<tr><td>${new Date(e.recorded_at).toLocaleDateString('de-DE')}</td>
+      <td style="font-family:var(--mono);font-weight:700;color:${col}">${sc}%</td>
+      <td>${e.gaps} Lücken</td></tr>`;
+  }).join('');
+
+  document.getElementById('pane-history').innerHTML=`
+    <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+      <div class="stat-card"><div class="stat-lbl">Aktueller Score</div>
+        <div class="stat-num" style="color:${lastScore>=75?'var(--green)':lastScore>=50?'var(--amber)':'var(--red)'}">${lastScore}%</div>
+        <div class="stat-sub">Letzter Gap-Check</div></div>
+      <div class="stat-card"><div class="stat-lbl">Entwicklung</div>
+        <div class="stat-num" style="color:${trendCol}">${trendStr}</div>
+        <div class="stat-sub">seit erstem Check</div></div>
+      <div class="stat-card"><div class="stat-lbl">Messungen</div>
+        <div class="stat-num">${n}</div>
+        <div class="stat-sub">Gap-Checks gespeichert (lokal)</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h3>Compliance-Score-Verlauf</h3></div>
+      <div class="panel-body" style="padding:20px 20px 8px">${svg}</div>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <div class="panel-head"><h3>Alle Messungen</h3></div>
+      <table><thead><tr><th>Datum</th><th>Score</th><th>Lücken</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    </div>`;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -611,13 +687,7 @@ function msg(type, text) {
   setTimeout(()=>el.innerHTML='',5000);
 }
 
-function upgrade(feature) {
-  return `<div class="upgrade-box">
-    <h3>${feature}</h3>
-    <p>Diese Funktion ist ab dem Business-Tarif verfügbar.</p>
-    <a class="upgrade-link" href="https://www.brain-media.de/executable_compliance.html" target="_blank">→ Upgrade</a>
-  </div>`;
-}
+init();
 </script>
 </body>
 </html>
