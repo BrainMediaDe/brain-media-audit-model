@@ -1,73 +1,45 @@
-# Mitwirken an BAM Core
+# Beitragen zu BAM Core
 
-Danke fuer Ihr Interesse, das Brain-Media Audit Model zu erweitern!
+Danke für Ihr Interesse an BAM Core. Dieses Dokument fasst zusammen,
+wie ein Beitrag eingereicht wird und was dabei nicht Ihre Aufgabe ist.
 
-## Womit kann ich helfen?
+## Eine Anforderung einreichen
 
-Die wertvollsten Beitraege sind aktuell:
+1. Prüfen Sie zuerst, ob die Fundstelle bereits als Objekt existiert
+   — durchsuchen Sie `bam_database.json` oder die aufgelösten Seiten
+   unter `bam.brain-media.de/id/`.
+2. Öffnen Sie einen Pull Request mit dem vorgeschlagenen Objekt in
+   demselben Format wie die bestehenden Einträge: `regulation`,
+   `article`, `requirement`, `gap_check`, `remediation`, `risk`,
+   `control`, `evidence`, `cross_refs`.
+3. Belegen Sie die Fundstelle mit einem Verweis auf den Gesetzestext.
+   Ohne nachvollziehbare Quelle wird ein Vorschlag nicht übernommen.
 
-1. **Fehlende Frameworks ergaenzen** - ISO 42001 und der Cyber
-   Solidarity Act (CSA) sind noch nicht in `bam_database.json`
-   enthalten. Neue BAM-Objekte fuer diese Frameworks (Struktur siehe
-   unten) sind sehr willkommen.
+Kleinere Korrekturen (Tippfehler, falsch zugeordnete Artikelnummern)
+können Sie direkt als Pull Request gegen die betroffene Zeile stellen.
 
-2. **ISO 27001:2022 Coverage vervollstaendigen** - aktuell 74 % (69
-   von 93 Controls vollstaendig, 24 teilweise).
+## Was Sie nicht selbst vergeben
 
-3. **Cross-Framework-Verknuepfungen** - weitere `CROSS`-Objekte, die
-   zeigen, wie eine Massnahme mehrere Frameworks gleichzeitig erfuellt.
+**BAM-IDs vergibt ausschließlich die Modellpflege** — das gilt auch für
+eigene, im Pull Request vorgeschlagene Objekte. Schlagen Sie den
+Inhalt vor, nicht den Bezeichner; die endgültige ID wird beim Merge
+nach den Regeln in [`IDENTIFIERS.md`](IDENTIFIERS.md) vergeben.
 
-4. **Korrekturen** - Aktualisierung von Artikel-Referenzen bei
-   Aenderungen der zugrunde liegenden Rechtsakte.
+Hintergrund: Ohne diese Regel würde jeder externe Beitrag eigene
+ID-Konventionen mitbringen, und das Modell würde an genau dieser
+Stelle zerfasern.
 
-5. **Uebersetzungen** - Englische Version des Datenmodells.
+## Was bewusst nicht geplant ist
 
-## Struktur eines BAM-Objekts
+Bevor Sie einen größeren Vorschlag ausarbeiten, lohnt sich ein Blick
+in den Abschnitt [„Nicht geplant"](../ROADMAP.md#nicht-geplant) der
+Roadmap — unter anderem Multi-Tenant-Betrieb und automatische
+Übernahme rechtlicher Änderungen ohne fachliche Prüfung stehen dort
+bewusst nicht auf der Liste.
 
-```json
-{
-  "bam_id": "NIS2-020-GOVERNANCE",
-  "regulation": "NIS-2",
-  "article": "Art. 20",
-  "status": "ausstehend",
-  "tags": ["governance", "leitungsverantwortung"],
-  "cross_refs": ["DORA Art. 5", "ISO 27001 A.5.1"],
-  "requirement": {
-    "text": "...",
-    "source": "NIS-2 Art. 20 Abs. 1-2",
-    "priority": "hoch"
-  },
-  "gap_check": {
-    "question": "...",
-    "if_yes": "...",
-    "if_no": "...",
-    "if_partial": "..."
-  },
-  "remediation": { ... },
-  "risk": { ... },
-  "control": { ... },
-  "evidence": { ... },
-  "iso27001_mapping": [ ... ],
-  "iso27001_2022_controls": [ ... ]
-}
-```
+## Fragen vorab
 
-## Lizenz Ihrer Beitraege
-
-Mit einem Pull Request stimmen Sie zu, dass:
-
-- Beitraege zum **Code** unter AGPLv3 lizenziert werden,
-- Beitraege zum **Datenmodell** (`bam_database.json`) unter
-  CC BY-SA 4.0 lizenziert werden.
-
-Bitte entfernen Sie keine bestehenden Copyright-/Attribution-Hinweise.
-
-## Pull Requests
-
-1. Fork erstellen
-2. Branch fuer Ihre Aenderung anlegen
-3. Aenderungen an `bam_database.json` mit `python3 -m json.tool
-   bam_database.json` auf gueltiges JSON pruefen
-4. Pull Request mit kurzer Beschreibung erstellen
-
-Fragen? Issue eroeffnen oder info@brain-media.de.
+Bei größeren Änderungen oder wenn unklar ist, ob etwas als Änderung
+oder neues Objekt zählt (siehe [`IDENTIFIERS.md`, Abschnitt 5](IDENTIFIERS.md#5-ändern-vs-neuanlegen)),
+öffnen Sie gerne zuerst ein Issue, bevor Sie den Pull Request
+ausarbeiten.
