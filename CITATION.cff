@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+message: "Wenn Sie dieses Datenmodell verwenden, zitieren Sie es bitte wie folgt."
+title: "Brain-Media Audit Model (BAM) Core"
+type: dataset
+authors:
+  - family-names: Reibold
+    given-names: Holger
+    affiliation: Brain-Media.de
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+repository-code: "https://github.com/BrainMediaDe/brain-media-audit-model"
+url: "https://bam.brain-media.de/"
+abstract: >-
+  Offenes Datenmodell fuer Multi-Framework-Compliance (NIS-2, DORA,
+  CRA, EU AI Act, DSGVO, ISO/IEC 27001). Jedes Objekt traegt einen
+  stabilen, zitierfaehigen Bezeichner (BAM-ID); die Zusagen dazu
+  stehen in docs/IDENTIFIERS.md.
+keywords:
+  - Compliance
+  - NIS-2
+  - DORA
+  - Cyber Resilience Act
+  - EU AI Act
+  - DSGVO
+  - ISO/IEC 27001
+  - Informationssicherheit
+  - Audit
+  - Regulatory Change Management
+license: CC-BY-SA-4.0
+license-url: "https://creativecommons.org/licenses/by-sa/4.0/"
+# Referenzimplementierung (bam_api_local.py, bam_dashboard.html) steht
+# gesondert unter AGPL-3.0-or-later, siehe LICENSE im Repository-Root.
+version: "2.0"
+date-released: "2026-09-08"
+# identifiers:
+#   - type: doi
+#     value: 10.5281/zenodo.XXXXXXX
+#     description: "Concept-DOI, zeigt immer auf die neueste Version"
