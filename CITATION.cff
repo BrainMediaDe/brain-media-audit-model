@@ -33,5 +33,5 @@ version: "2.0"
 date-released: "2026-09-08"
 # identifiers:
 #   - type: doi
-#     value: 10.5281/zenodo.XXXXXXX
+#     value: https://doi.org/10.5281/zenodo.22668762
 #     description: "Concept-DOI, zeigt immer auf die neueste Version"
