@@ -9,7 +9,7 @@ Das Format folgt lose [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 bezeichnet den Stand des Datenmodells und ist das, was zitiert und mit
 einem DOI versehen wird. Die Release-Nummer bezeichnet den Stand des
 Repositorys einschließlich der Referenzimplementierung. Ein Release wie
-2.0.1 kann die Implementierung erweitern, ohne die Modellversion zu
+2.0.3 kann die Implementierung erweitern, ohne die Modellversion zu
 berühren, und berührt damit auch keine Zitation.
 
 Ab Modellversion 2.0 gelten die Zusagen aus
@@ -18,7 +18,7 @@ werden nicht wiederverwendet und nicht gelöscht.
 
 ---
 
-## [2.0.1] – 2026-10-07
+## [2.0.3] – 2026-10-07
 
 Modellversion unverändert 2.0. Das Datenmodell wurde nicht angefasst,
 alle BAM-IDs bleiben gültig, bestehende Zitate und der DOI der
@@ -65,6 +65,14 @@ nicht erfüllt 0, bezogen auf alle Objekte mit Prüffrage.
 
 - XLSX benötigt `openpyxl`. Fehlt das Paket, antwortet der Endpunkt mit
   einem Hinweis und `501`; CSV und JSON funktionieren unverändert.
+
+---
+
+## [2.0.2] – 2026-09-09 und [2.0.1] – 2026-09-08
+
+Technische Re-Releases ohne inhaltliche Änderung gegenüber 2.0. Sie
+wurden angelegt, damit die Zenodo-Verknüpfung greift und ein DOI
+vergeben wird; das ursprüngliche 2.0-Release lag vor der Aktivierung.
 
 ---
 

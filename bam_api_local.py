@@ -10,7 +10,7 @@ Siehe LICENSE-Datei im Repository-Root.
 Teil von "Brain-Media Audit Model (BAM) Core"
 https://github.com/BrainMediaDe/brain-media-audit-model
 
-BAM Core 2.0.1
+BAM Core 2.0.3
 
 Minimale lokale REST-API fuer bam_dashboard.html (Single-User,
 ohne Multi-Tenant, ohne Authentifizierung). Liest bam_database.json
@@ -185,7 +185,7 @@ def get_meta():
 
 
 # ─────────────────────────────────────────────────────────────────
-# EXPORT (ab 2.0.1)
+# EXPORT (ab 2.0.3)
 #
 # Die Endpunkte sind zustandslos: der Bewertungsstand wird im Request
 # uebergeben, nicht gespeichert. BAM Core 2.0.x haelt den Zustand im

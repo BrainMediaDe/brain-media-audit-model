@@ -122,7 +122,7 @@ betroffen sind.
 
 ---
 
-## Export der Gap-Analyse (ab 2.0.1)
+## Export der Gap-Analyse (ab 2.0.3)
 
 Ergebnisse lassen sich als Arbeitspapier ausgeben, in einer Form, die
 in Audit-Unterlagen weiterverwendbar ist: **CSV**, **XLSX** und
