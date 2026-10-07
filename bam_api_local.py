@@ -10,6 +10,8 @@ Siehe LICENSE-Datei im Repository-Root.
 Teil von "Brain-Media Audit Model (BAM) Core"
 https://github.com/BrainMediaDe/brain-media-audit-model
 
+BAM Core 2.0.1
+
 Minimale lokale REST-API fuer bam_dashboard.html (Single-User,
 ohne Multi-Tenant, ohne Authentifizierung). Liest bam_database.json
 und stellt die Inhalte unter /api/v2 bereit.
@@ -18,14 +20,16 @@ Fuer produktiven Betrieb auf einem eigenen Server siehe
 docs/DEPLOYMENT.md.
 
 Starten:
-    pip3 install flask flask-cors --break-system-packages
+    pip3 install flask flask-cors openpyxl --break-system-packages
     python3 bam_api_local.py
 """
 
 import json
 from pathlib import Path
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, Response
 from flask_cors import CORS
+
+import bam_export
 
 BASE_DIR = Path(__file__).parent
 DB_PATH = BASE_DIR / "bam_database.json"
@@ -171,10 +175,126 @@ def get_object_detail(bam_id):
 def get_meta():
     data = load_db()
     return jsonify({
+        "version": data.get("version"),
+        "released": data.get("released"),
         "schema_version": data.get("schema_version"),
         "description": data.get("description"),
         "publisher": data.get("_publisher"),
         "license": data.get("_license"),
+    })
+
+
+# ─────────────────────────────────────────────────────────────────
+# EXPORT (ab 2.0.1)
+#
+# Die Endpunkte sind zustandslos: der Bewertungsstand wird im Request
+# uebergeben, nicht gespeichert. BAM Core 2.0.x haelt den Zustand im
+# Browser (localStorage); eine serverseitige Persistenz kommt erst mit
+# dem Instanz-Layer in 2.2. POST bedeutet hier also "Daten mitgeben",
+# nicht "Daten anlegen".
+# ─────────────────────────────────────────────────────────────────
+
+MIME = {
+    "csv": "text/csv; charset=utf-8",
+    "json": "application/json; charset=utf-8",
+    "xlsx": ("application/vnd.openxmlformats-officedocument"
+             ".spreadsheetml.sheet"),
+}
+
+
+@app.route("/api/v2/export/formats")
+def get_export_formats():
+    """Welche Formate diese Installation ausliefern kann."""
+    formats = ["csv", "json"]
+    try:
+        import openpyxl  # noqa: F401
+        formats.append("xlsx")
+    except ImportError:
+        pass
+    return jsonify({
+        "formats": formats,
+        "note": ("xlsx benoetigt openpyxl: "
+                 "pip3 install openpyxl --break-system-packages"),
+    })
+
+
+def _export(payload):
+    fmt = (payload.get("format") or "csv").lower()
+    if fmt not in MIME:
+        return jsonify({"error": f"Unbekanntes Format '{fmt}'. "
+                                 f"Erlaubt: {', '.join(MIME)}"}), 400
+
+    gaps = payload.get("gaps") or {}
+    if not isinstance(gaps, dict):
+        return jsonify({"error": "'gaps' muss ein Objekt "
+                                 "{bam_id: 'ja'|'teil'|'nein'} sein"}), 400
+
+    only_gaps = bool(payload.get("only_gaps"))
+    data = load_db()
+
+    rows = bam_export.build_rows(data, gaps, only_gaps=only_gaps)
+    summary_rows, summary_total = bam_export.build_summary(data, gaps)
+    meta = bam_export.build_meta(
+        data,
+        organisation=payload.get("organisation", ""),
+        assessor=payload.get("assessor", ""),
+        note=payload.get("note", ""),
+    )
+
+    if fmt == "csv":
+        body = bam_export.to_csv(rows)
+    elif fmt == "json":
+        body = bam_export.to_json(rows, meta, summary_rows, summary_total)
+    else:
+        try:
+            body = bam_export.to_xlsx(rows, meta, summary_rows, summary_total)
+        except ImportError:
+            return jsonify({
+                "error": "xlsx benoetigt openpyxl. Installieren mit: "
+                         "pip3 install openpyxl --break-system-packages, "
+                         "oder format=csv verwenden."
+            }), 501
+
+    name = bam_export.filename(fmt, payload.get("organisation", ""), only_gaps)
+    return Response(body, mimetype=MIME[fmt], headers={
+        "Content-Disposition": f'attachment; filename="{name}"',
+        "X-BAM-Rows": str(len(rows)),
+    })
+
+
+@app.route("/api/v2/export/gap", methods=["POST"])
+def post_export_gap():
+    """
+    Export der Gap-Analyse. Body (alle Felder optional):
+
+        {
+          "gaps": {"NIS2-020-GOVERNANCE": "ja", "...": "teil"},
+          "format": "csv" | "xlsx" | "json",
+          "organisation": "Musterfirma GmbH",
+          "assessor": "Interne Revision",
+          "note": "Zwischenstand Q4",
+          "only_gaps": false
+        }
+
+    only_gaps = true liefert nur Positionen mit Feststellung
+    (teilweise/nicht erfuellt), also die eigentliche Maengelliste.
+    """
+    return _export(request.get_json(silent=True) or {})
+
+
+@app.route("/api/v2/export/gap", methods=["GET"])
+def get_export_gap():
+    """
+    Leeres Arbeitspapier: alle Objekte, Spalte 'Bewertung' auf
+    'nicht bewertet'. Praktisch als Vorlage oder zum Ausdrucken.
+
+        /api/v2/export/gap?format=xlsx&organisation=Musterfirma
+    """
+    return _export({
+        "format": request.args.get("format", "csv"),
+        "organisation": request.args.get("organisation", ""),
+        "assessor": request.args.get("assessor", ""),
+        "note": request.args.get("note", ""),
     })
 
 
