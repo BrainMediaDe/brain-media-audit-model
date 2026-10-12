@@ -1,0 +1,10 @@
+.git
+.github
+__pycache__
+*.pyc
+*.zip
+docs
+deploy
+public
+*.md
+!README.md
