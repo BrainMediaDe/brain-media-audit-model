@@ -18,6 +18,49 @@ werden nicht wiederverwendet und nicht gelöscht.
 
 ---
 
+## [2.0.4] – 2026-10-07
+
+Modellversion unverändert 2.0. Das Datenmodell wurde nicht angefasst.
+
+### Neu: Bericht und Druckansicht
+
+Neben dem Arbeitspapier aus 2.0.3 gibt es jetzt eine Dokumentfassung
+für Leitungsorgan, Ablage und Prüfer.
+
+- Schaltfläche **Bericht drucken (PDF)** im Reiter Export. Sie erzeugt
+  Deckblatt, Zusammenfassung je Regulierung und die Feststellungen als
+  Fließtext, nach Risikoscore absteigend, dazu eine Liste der noch
+  nicht bewerteten Prüffragen.
+- Eigenes Druck-Stylesheet (A4, Seitenumbrüche vor jedem Abschnitt,
+  keine umbrochenen Einzelpositionen). Das PDF entsteht über den
+  Druckdialog des Browsers; es wird **keine PDF-Bibliothek** benötigt.
+- Der Bericht ist bewusst kein ausgedrucktes Tabellenblatt. Die
+  21-spaltige Matrix bleibt dem Export in CSV und XLSX vorbehalten,
+  der serverseitige Berichtsgenerator kommt mit 2.4.
+- Der Erfüllungsgrad wird als Untergrenze ausgewiesen, solange nicht
+  alle Prüffragen bewertet sind.
+
+### Neu: Container-Image
+
+- `Dockerfile`, `compose.yml`, `.dockerignore` und `requirements.txt`.
+  `docker compose up` genügt, danach ist das Dashboard unter
+  `http://localhost:5000` erreichbar.
+- Im Container läuft waitress statt des Flask-Entwicklungsservers, der
+  Prozess läuft nicht als root, und ein Healthcheck prüft
+  `/api/v2/meta`.
+- `bam_database.json` ist als Volume eingebunden, sodass ein eigener
+  Modellstand ohne Neubau des Images verwendet werden kann.
+- Der Port ist in `compose.yml` bewusst auf `127.0.0.1` gebunden. BAM
+  Core 2.0.x kennt weder Authentifizierung noch Mandanten und gehört
+  nicht ungeschützt ins Netz.
+
+### Geändert
+
+- Das Dashboard lädt beim Start zusätzlich `/api/v2/meta`, damit
+  Modellversion und Modellstand im Bericht erscheinen.
+
+---
+
 ## [2.0.3] – 2026-10-07
 
 Modellversion unverändert 2.0. Das Datenmodell wurde nicht angefasst,

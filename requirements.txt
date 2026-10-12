@@ -1,0 +1,17 @@
+# Brain-Media Audit Model (BAM) Core
+
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Produktiver WSGI-Server (siehe docs/DEPLOYMENT.md)
+gunicorn>=21.0.0
+
+# WSGI-Server im Container (siehe Dockerfile, ab 2.0.4)
+waitress>=3.0
+
+# XLSX-Export der Gap-Analyse (ab 2.0.3).
+# Ohne openpyxl funktionieren CSV und JSON unveraendert weiter.
+openpyxl>=3.1
+
+# Optional, nur fuer bam_rag.py:
+# openai>=1.0

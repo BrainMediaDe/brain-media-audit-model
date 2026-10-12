@@ -157,6 +157,59 @@ tr:hover td{background:rgba(0,0,0,.01);}
   .nav,.tabs{padding-left:16px;padding-right:16px;}
   .tabs{overflow-x:auto;}
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   BERICHT UND DRUCKANSICHT (ab 2.0.4)
+
+   Der Bericht ist bewusst kein ausgedrucktes Tabellenblatt, sondern
+   ein Dokument: Deckblatt, Zusammenfassung, Feststellungen als Text.
+   Am Bildschirm bleibt er verborgen; "Drucken" im Browser erzeugt
+   daraus ein PDF, ohne dass eine PDF-Bibliothek noetig waere.
+   ───────────────────────────────────────────────────────────────── */
+#report{display:none;}
+
+.rp{font-family:var(--sans);color:var(--ink);font-size:10.5pt;line-height:1.55;}
+.rp-cover{min-height:85vh;display:flex;flex-direction:column;justify-content:center;}
+.rp-kicker{font-family:var(--mono);font-size:9pt;letter-spacing:.14em;text-transform:uppercase;color:var(--steel);margin-bottom:10mm;}
+.rp-title{font-size:26pt;font-weight:600;line-height:1.15;letter-spacing:-.02em;margin-bottom:4mm;}
+.rp-sub{font-size:12pt;color:var(--steel);margin-bottom:14mm;}
+.rp-facts{border-top:1pt solid var(--border);}
+.rp-fact{display:flex;gap:8mm;padding:2.6mm 0;border-bottom:.5pt solid var(--border);}
+.rp-fact dt{flex:0 0 42mm;font-family:var(--mono);font-size:8.5pt;letter-spacing:.06em;text-transform:uppercase;color:var(--steel);}
+.rp-fact dd{flex:1;font-size:10.5pt;}
+.rp-h2{font-size:15pt;font-weight:600;letter-spacing:-.01em;margin:0 0 5mm;padding-bottom:2mm;border-bottom:1pt solid var(--ink);}
+.rp-lead{font-size:11pt;color:var(--steel);margin-bottom:7mm;}
+.rp-score{font-family:var(--mono);font-size:34pt;font-weight:500;line-height:1;margin-bottom:2mm;}
+.rp-score small{font-size:13pt;color:var(--steel);font-weight:400;}
+.rp-table{width:100%;border-collapse:collapse;font-size:9.5pt;margin-bottom:8mm;}
+.rp-table th{text-align:left;font-family:var(--mono);font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:var(--steel);font-weight:500;padding:2mm 2mm 2mm 0;border-bottom:1pt solid var(--ink);}
+.rp-table td{padding:2mm 2mm 2mm 0;border-bottom:.5pt solid var(--border);vertical-align:top;}
+.rp-table td.num,.rp-table th.num{text-align:right;font-family:var(--mono);padding-right:0;}
+.rp-table tr.sum td{font-weight:600;border-bottom:1pt solid var(--ink);}
+.rp-item{margin-bottom:7mm;padding-bottom:5mm;border-bottom:.5pt solid var(--border);}
+.rp-item-head{display:flex;justify-content:space-between;gap:6mm;align-items:baseline;margin-bottom:1.5mm;}
+.rp-id{font-family:var(--mono);font-size:10pt;font-weight:500;}
+.rp-verdict{font-family:var(--mono);font-size:8.5pt;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;}
+.rp-v-nein{color:var(--red);}
+.rp-v-teil{color:var(--amber);}
+.rp-src{font-size:9pt;color:var(--steel);margin-bottom:2.5mm;}
+.rp-field{margin-bottom:2mm;}
+.rp-field b{display:block;font-family:var(--mono);font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:var(--steel);font-weight:500;margin-bottom:.6mm;}
+.rp-meta{font-size:9pt;color:var(--steel);margin-top:2.5mm;}
+.rp-foot{font-size:8.5pt;color:var(--steel);border-top:.5pt solid var(--border);padding-top:3mm;margin-top:10mm;line-height:1.5;}
+.rp-empty{font-size:11pt;color:var(--steel);padding:8mm 0;}
+
+@media print{
+  @page{size:A4;margin:18mm 16mm 16mm 16mm;}
+  html,body{background:var(--white)!important;}
+  #app-screen{display:none!important;}
+  #report{display:block!important;}
+  .rp-section{break-before:page;page-break-before:always;}
+  .rp-cover{break-after:page;page-break-after:always;min-height:0;height:230mm;}
+  .rp-item,.rp-fact,.rp-table tr{break-inside:avoid;page-break-inside:avoid;}
+  .rp-h2{break-after:avoid;page-break-after:avoid;}
+  a{color:inherit;text-decoration:none;}
+}
 </style>
 </head>
 <body>
@@ -195,6 +248,9 @@ tr:hover td{background:rgba(0,0,0,.01);}
   </div>
 </div>
 
+<!-- BERICHT (nur fuer die Druckansicht, ab 2.0.4) -->
+<div id="report" aria-hidden="true"></div>
+
 <script>
 // ─────────────────────────────────────────────────────────────────
 // CONFIG
@@ -202,7 +258,7 @@ tr:hover td{background:rgba(0,0,0,.01);}
 const IS_LOCAL = ['localhost','127.0.0.1'].includes(location.hostname);
 const API_BASE = IS_LOCAL ? 'http://localhost:5000/api/v2' : '/api/v2';
 
-let OBJECTS = [], REGCHANGES = [], GAPS = {};
+let OBJECTS = [], REGCHANGES = [], GAPS = {}, META = {};
 
 // ─────────────────────────────────────────────────────────────────
 // API (kein Login, keine Tarife - BAM Core ist lokal und Single-User)
@@ -244,12 +300,14 @@ function appendHistory(entry) {
 // ─────────────────────────────────────────────────────────────────
 async function init() {
   try {
-    const [objects, rc] = await Promise.all([
+    const [objects, rc, meta] = await Promise.all([
       req('/objects'),
-      req('/regulatory-changes').catch(()=>({tracked_initiatives:[]}))
+      req('/regulatory-changes').catch(()=>({tracked_initiatives:[]})),
+      req('/meta').catch(()=>({}))
     ]);
     OBJECTS = Array.isArray(objects) ? objects : (objects.objects||[]);
     REGCHANGES = rc.tracked_initiatives||[];
+    META = meta||{};
     GAPS = loadGaps();
     buildOverview();
     buildControls();
@@ -460,11 +518,15 @@ function buildExport() {
       </label>
       <div class="exp-actions">
         <button class="save-btn" id="exp-run" onclick="runExport()">Export erzeugen →</button>
+        <button class="save-btn" id="exp-print" onclick="printReport()"
+          style="background:var(--white);color:var(--ink);border:1px solid var(--border)">Bericht drucken (PDF)</button>
         <span style="font-size:13px;color:var(--muted)">${answered} von ${total} Prüffragen beantwortet</span>
       </div>
       <p class="exp-note">
-        Die Excel-Mappe enthält Deckblatt, Zusammenfassung je Regulierung und die vollständige Gap-Analyse mit Anforderung, Feststellung, Maßnahme, Aufwand, Control, Nachweisart und ISO-27001-Zuordnung.
-        Jede Zeile trägt ihre BAM-ID und deren dauerhafte Adresse, sodass Prüfer eine Position jederzeit nachschlagen können.
+        <b>Export</b> erzeugt ein Arbeitspapier zum Weiterverarbeiten: Deckblatt, Zusammenfassung je Regulierung und die vollständige Gap-Analyse mit Anforderung, Feststellung, Maßnahme, Aufwand, Control, Nachweisart und ISO-27001-Zuordnung.
+        Jede Zeile trägt ihre BAM-ID und deren dauerhafte Adresse, sodass Prüfer eine Position jederzeit nachschlagen können.<br><br>
+        <b>Bericht drucken</b> öffnet den Druckdialog mit einer Dokumentfassung: Deckblatt, Zusammenfassung und die Feststellungen als Fließtext, nach Risiko sortiert.
+        Im Druckdialog „Als PDF sichern“ wählen. Dafür wird keine zusätzliche Software benötigt.
       </p>
     </div>`;
 }
@@ -535,6 +597,157 @@ async function runExport() {
     btn.removeAttribute('disabled');
     btn.textContent = 'Export erzeugen →';
   }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// BERICHT / DRUCKANSICHT (ab 2.0.4)
+//
+// Erzeugt ein Dokument statt eines Tabellenausdrucks und uebergibt es
+// dem Druckdialog des Browsers. Daraus entsteht ein PDF ohne jede
+// zusaetzliche Bibliothek. Der serverseitige Berichtsgenerator kommt
+// mit 2.4.
+// ─────────────────────────────────────────────────────────────────
+const RP_LABEL = {ja:'erfüllt', teil:'teilweise erfüllt', nein:'nicht erfüllt'};
+
+function reportSummary() {
+  const perReg = {};
+  OBJECTS.filter(o=>o.gap_check?.question).forEach(o => {
+    const reg = o.regulation||'Sonstige';
+    const e = perReg[reg] || (perReg[reg] = {reg, total:0, bewertet:0, ja:0, teil:0, nein:0, pts:0});
+    const a = GAPS[o.bam_id];
+    e.total++;
+    if (a) e.bewertet++;
+    if (a==='ja'){ e.ja++; e.pts+=1; }
+    else if (a==='teil'){ e.teil++; e.pts+=0.5; }
+    else if (a==='nein'){ e.nein++; }
+  });
+  const rows = Object.values(perReg).sort((a,b)=>a.reg.localeCompare(b.reg));
+  rows.forEach(e => e.score = e.total ? Math.round(e.pts/e.total*100) : 0);
+  const tot = rows.reduce((s,e)=>({
+    reg:'Gesamt', total:s.total+e.total, bewertet:s.bewertet+e.bewertet,
+    ja:s.ja+e.ja, teil:s.teil+e.teil, nein:s.nein+e.nein, pts:s.pts+e.pts
+  }), {reg:'Gesamt', total:0, bewertet:0, ja:0, teil:0, nein:0, pts:0});
+  tot.score = tot.total ? Math.round(tot.pts/tot.total*100) : 0;
+  return {rows, tot};
+}
+
+function esc(s) {
+  return String(s==null?'':s).replace(/[&<>"]/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+
+function buildReport(org, assessor, note) {
+  const {rows, tot} = reportSummary();
+  const today = new Date().toLocaleDateString('de-DE', {year:'numeric', month:'long', day:'numeric'});
+
+  const findings = OBJECTS
+    .filter(o => GAPS[o.bam_id]==='nein' || GAPS[o.bam_id]==='teil')
+    .sort((a,b) => (b.risk?.score||0)-(a.risk?.score||0));
+
+  const cover = `
+    <section class="rp-cover">
+      <p class="rp-kicker">Brain-Media Audit Model · Gap-Analyse</p>
+      <h1 class="rp-title">Gap-Analyse${org?'<br>'+esc(org):''}</h1>
+      <p class="rp-sub">NIS-2 · DORA · Cyber Resilience Act · EU AI Act · DSGVO</p>
+      <dl class="rp-facts">
+        ${org?`<div class="rp-fact"><dt>Organisation</dt><dd>${esc(org)}</dd></div>`:''}
+        ${assessor?`<div class="rp-fact"><dt>Bewertet durch</dt><dd>${esc(assessor)}</dd></div>`:''}
+        <div class="rp-fact"><dt>Stand</dt><dd>${today}</dd></div>
+        <div class="rp-fact"><dt>Bewertet</dt><dd>${tot.bewertet} von ${tot.total} Prüffragen</dd></div>
+        <div class="rp-fact"><dt>Feststellungen</dt><dd>${findings.length}</dd></div>
+        ${note?`<div class="rp-fact"><dt>Anmerkung</dt><dd>${esc(note)}</dd></div>`:''}
+        <div class="rp-fact"><dt>Modell</dt><dd>Brain-Media Audit Model, Version ${esc(META.version||'2.0')}</dd></div>
+      </dl>
+    </section>`;
+
+  const summary = `
+    <section class="rp-section">
+      <h2 class="rp-h2">Zusammenfassung</h2>
+      <p class="rp-score">${tot.score} %<small> Erfüllungsgrad</small></p>
+      <p class="rp-lead">Bezogen auf ${tot.total} Prüffragen. Erfüllt zählt voll,
+         teilweise erfüllt zur Hälfte, nicht erfüllt und nicht bewertet zählen nicht.</p>
+      <table class="rp-table">
+        <thead><tr><th>Regulierung</th><th class="num">Fragen</th><th class="num">bewertet</th>
+          <th class="num">erfüllt</th><th class="num">teilw.</th><th class="num">nicht</th>
+          <th class="num">Grad</th></tr></thead>
+        <tbody>
+          ${rows.map(e=>`<tr><td>${esc(e.reg)}</td><td class="num">${e.total}</td>
+            <td class="num">${e.bewertet}</td><td class="num">${e.ja}</td>
+            <td class="num">${e.teil}</td><td class="num">${e.nein}</td>
+            <td class="num">${e.score} %</td></tr>`).join('')}
+          <tr class="sum"><td>Gesamt</td><td class="num">${tot.total}</td>
+            <td class="num">${tot.bewertet}</td><td class="num">${tot.ja}</td>
+            <td class="num">${tot.teil}</td><td class="num">${tot.nein}</td>
+            <td class="num">${tot.score} %</td></tr>
+        </tbody>
+      </table>
+      ${tot.bewertet < tot.total ? `<p class="rp-lead">Hinweis: ${tot.total-tot.bewertet}
+        Prüffragen sind noch nicht bewertet. Der Erfüllungsgrad ist daher eine
+        Untergrenze, kein abschließendes Ergebnis.</p>` : ''}
+    </section>`;
+
+  const findingsHtml = `
+    <section class="rp-section">
+      <h2 class="rp-h2">Feststellungen (${findings.length})</h2>
+      <p class="rp-lead">Nach Risikoscore absteigend. Jede Position trägt ihren
+        dauerhaften Bezeichner und ist unter bam.brain-media.de nachschlagbar.</p>
+      ${findings.length === 0
+        ? '<p class="rp-empty">Keine Feststellungen. Es wurde keine Prüffrage mit „teilweise erfüllt“ oder „nicht erfüllt“ bewertet.</p>'
+        : findings.map(o => {
+            const a = GAPS[o.bam_id];
+            const g = o.gap_check||{}, rem = o.remediation||{}, ctrl = o.control||{};
+            const cost = rem.cost_estimate||{};
+            const pt = cost.pt_min!=null ? `${cost.pt_min} bis ${cost.pt_max} Personentage` : '';
+            const bits = [ctrl.priority?`Priorität ${esc(ctrl.priority)}`:'',
+                          o.risk?.score!=null?`Risikoscore ${o.risk.score}`:'',
+                          pt, rem.deadline?esc(rem.deadline):''].filter(Boolean);
+            return `<div class="rp-item">
+              <div class="rp-item-head">
+                <span class="rp-id">${esc(o.bam_id)}</span>
+                <span class="rp-verdict rp-v-${a}">${RP_LABEL[a]}</span>
+              </div>
+              <p class="rp-src">${esc(o.regulation)} · ${esc(o.article||'')}</p>
+              <div class="rp-field"><b>Anforderung</b>${esc((o.requirement||{}).text)}</div>
+              <div class="rp-field"><b>Prüffrage</b>${esc(g.question)}</div>
+              ${(a==='nein'?g.if_no:g.if_partial) ? `<div class="rp-field"><b>Feststellung</b>${esc(a==='nein'?g.if_no:g.if_partial)}</div>`:''}
+              ${rem.summary?`<div class="rp-field"><b>Maßnahme</b>${esc(rem.summary)}</div>`:''}
+              ${ctrl.measure?`<div class="rp-field"><b>Control</b>${esc(ctrl.measure)}</div>`:''}
+              ${bits.length?`<p class="rp-meta">${bits.join(' · ')}</p>`:''}
+            </div>`;
+          }).join('')}
+    </section>`;
+
+  const open = OBJECTS.filter(o => o.gap_check?.question && !GAPS[o.bam_id]);
+  const openHtml = open.length ? `
+    <section class="rp-section">
+      <h2 class="rp-h2">Noch nicht bewertet (${open.length})</h2>
+      <p class="rp-lead">Diese Prüffragen wurden nicht beantwortet. Sie sind weder
+        als erfüllt noch als Feststellung gewertet.</p>
+      <table class="rp-table">
+        <thead><tr><th>BAM-ID</th><th>Regulierung</th><th>Fundstelle</th></tr></thead>
+        <tbody>${open.map(o=>`<tr><td>${esc(o.bam_id)}</td><td>${esc(o.regulation)}</td>
+          <td>${esc(o.article||'')}</td></tr>`).join('')}</tbody>
+      </table>
+    </section>` : '';
+
+  const foot = `
+    <p class="rp-foot">
+      Erzeugt mit Brain-Media Audit Model (BAM) Core, Modellversion ${esc(META.version||'2.0')},
+      Stand ${esc(META.released||'')}. Datenmodell unter CC BY-SA 4.0,
+      Referenzimplementierung unter AGPLv3. Bezeichner dauerhaft auflösbar unter
+      bam.brain-media.de/id/&lt;BAM-ID&gt;.<br>
+      Dieser Bericht gibt einen Selbstbewertungsstand wieder und ersetzt weder eine
+      Prüfung noch eine Rechtsberatung.
+    </p>`;
+
+  document.getElementById('report').innerHTML =
+    `<div class="rp">${cover}${summary}${findingsHtml}${openHtml}${foot}</div>`;
+}
+
+function printReport() {
+  const g = id => (document.getElementById(id)?.value || '').trim();
+  buildReport(g('exp-org'), g('exp-assessor'), g('exp-note'));
+  window.print();
 }
 
 function setGap(id, val, btn) {

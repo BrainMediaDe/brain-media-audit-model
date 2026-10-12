@@ -168,6 +168,38 @@ pip3 install openpyxl --break-system-packages
 
 Fehlt das Paket, funktionieren CSV und JSON unveraendert weiter.
 
+### Bericht als PDF (ab 2.0.4)
+
+Der Export liefert ein Arbeitspapier zum Weiterverarbeiten. Fuer
+Leitungsorgan, Ablage und Pruefer gibt es daneben eine Dokumentfassung:
+**Bericht drucken (PDF)** im Reiter Export erzeugt Deckblatt,
+Zusammenfassung je Regulierung und die Feststellungen als Fliesstext,
+nach Risikoscore absteigend.
+
+Das PDF entsteht ueber den Druckdialog des Browsers ("Als PDF
+sichern"). Es wird keine zusaetzliche Software und keine
+PDF-Bibliothek benoetigt.
+
+---
+
+## Mit Docker starten (ab 2.0.4)
+
+```bash
+docker compose up
+```
+
+Danach ist das Dashboard unter `http://localhost:5000` erreichbar.
+
+Im Container laeuft waitress statt des Flask-Entwicklungsservers, der
+Prozess laeuft nicht als root, und ein Healthcheck prueft
+`/api/v2/meta`. `bam_database.json` ist als Volume eingebunden: Ein
+eigener Modellstand laesst sich verwenden, ohne das Image neu zu bauen.
+
+Der Port ist bewusst auf `127.0.0.1` gebunden. **BAM Core 2.0.x kennt
+weder Authentifizierung noch Mandanten** und gehoert nicht ungeschuetzt
+ins Netz. Fuer den Betrieb hinter Nginx mit TLS siehe den
+**[Deployment Guide](docs/DEPLOYMENT.md)**.
+
 ---
 
 ## Schnellstart

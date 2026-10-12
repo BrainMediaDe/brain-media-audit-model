@@ -10,7 +10,7 @@ Siehe LICENSE-Datei im Repository-Root.
 Teil von "Brain-Media Audit Model (BAM) Core"
 https://github.com/BrainMediaDe/brain-media-audit-model
 
-BAM Core 2.0.3
+BAM Core 2.0.4
 
 Minimale lokale REST-API fuer bam_dashboard.html (Single-User,
 ohne Multi-Tenant, ohne Authentifizierung). Liest bam_database.json
